@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="40dp"
+    android:id="@+id/task_element"
+    android:background="@drawable/menu_item_background_selector">
+
+    <TextView
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:id="@+id/task_no"
+        android:layout_gravity="center_vertical"
+        android:padding="10dp" />
+
+    <TextView
+        android:layout_width="180dp"
+        android:layout_height="40dp"
+        android:id="@+id/task_desc"
+        android:layout_gravity="center_vertical"
+        android:padding="10dp" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:id="@+id/task_etd"
+        android:layout_gravity="center_vertical"
+        android:padding="10dp" />
+
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:id="@+id/task_status"
+        android:layout_gravity="center_vertical"
+        android:padding="10dp" />
+</LinearLayout>
