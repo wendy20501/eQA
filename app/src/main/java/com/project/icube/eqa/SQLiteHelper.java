@@ -11,7 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class SQLiteHelper extends SQLiteOpenHelper implements DBHelper {
     private DataMgr dataMgr;
-    private static SQLiteDatabase database;
+    private SQLiteDatabase database;
+    private static SQLiteHelper instance = null;
 
     public SQLiteHelper(Context context, DataMgr dataMgr) {
         super(context, dataMgr.getDBName(), null, dataMgr.getDBVersion());
@@ -20,12 +21,18 @@ public class SQLiteHelper extends SQLiteOpenHelper implements DBHelper {
             database = this.getWritableDatabase();
         }
     }
-
+/*
     public SQLiteHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         if (database == null || !database.isOpen()) {
             database = this.getWritableDatabase();
         }
+    }
+*/
+    public static SQLiteHelper getInstance(Context context, DataMgr dataMgr) {
+        if (instance == null)
+            instance = new SQLiteHelper(context, dataMgr);
+        return instance;
     }
 
     @Override

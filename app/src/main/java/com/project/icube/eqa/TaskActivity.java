@@ -41,7 +41,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.context = this;
         setContentView(R.layout.activity_task);
-        taskMgr = new TaskMgr(this);
+        taskMgr = TaskMgr.getInstance(this);
         initUI();
         setDefault();
     }

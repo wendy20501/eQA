@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = this;
-        taskMgr = new TaskMgr(this);
+        taskMgr = TaskMgr.getInstance(this);
         if (taskMgr.GetTaskCount() == 0) {
             taskMgr.init();
         } else {

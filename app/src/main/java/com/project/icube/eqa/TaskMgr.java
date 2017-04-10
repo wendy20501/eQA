@@ -14,6 +14,7 @@ import java.util.jar.Pack200;
  * Created by yiwenwang on 2016/10/3.
  */
 public class TaskMgr implements DataMgr{
+    private static TaskMgr instance = null;
     private DBHelper db;
     private String DATABASE_NAME = "mydata.db";
     private int DATABASE_VERSION = 1;
@@ -64,7 +65,13 @@ public class TaskMgr implements DataMgr{
     private static final String STATUS_END = "st_end";
 
     public TaskMgr(Context context) {
-        db = new SQLiteHelper(context, this);
+        db = SQLiteHelper.getInstance(context, this);
+    }
+
+    public static TaskMgr getInstance(Context context) {
+        if (instance == null)
+            instance = new TaskMgr(context);
+        return instance;
     }
 
     public void init() {

@@ -58,7 +58,7 @@ public class TaskMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_menu);
-        taskMgr = new TaskMgr(this);
+        taskMgr = TaskMgr.getInstance(this);
         this.context = this;
         initUI();
         setDefault();
