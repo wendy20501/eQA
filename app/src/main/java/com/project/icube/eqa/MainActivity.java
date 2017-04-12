@@ -47,12 +47,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.context = this;
         taskMgr = TaskMgr.getInstance(this);
+        /*
         if (taskMgr.GetTaskCount() == 0) {
             taskMgr.init();
         } else {
             taskMgr.deleteAllTasks();
             taskMgr.deleteAllActions();
-        }
+        }*/
         taskMgr.sample();
 
         initUI();
