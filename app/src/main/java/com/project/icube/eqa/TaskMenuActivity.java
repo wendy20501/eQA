@@ -247,8 +247,6 @@ public class TaskMenuActivity extends AppCompatActivity {
             taskDesc.setText(current.getDesc());
             TextView taskEtd = (TextView) view.findViewById(R.id.task_etd);
             taskEtd.setText(current.getEtd());
-            TextView taskStatus = (TextView) view.findViewById(R.id.task_status);
-            taskStatus.setText(taskMgr.getStatusDesc(current.getStatus()));
             return view;
         }
     }

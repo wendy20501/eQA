@@ -34,20 +34,19 @@
                 android:layout_gravity="center_vertical" />
 
             <AutoCompleteTextView
+                android:id="@+id/search_input"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/search_input"
-                android:layout_margin="5dp"
                 android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
                 android:background="@color/bright_foreground_inverse_material_light" />
 
             <ImageButton
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/imgSearch"
-                android:src="@drawable/ic_search_white_24dp"
-                android:background="@color/icubeHeader"
-                android:layout_margin="5dp" />
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_search_white_24dp" />
 
         </LinearLayout>
 
@@ -58,42 +57,21 @@
             android:background="@color/gray">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Task No  "
-                android:id="@+id/task_no_title"
-                android:layout_margin="5dp"
-                android:singleLine="false"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/task_no_value"
-                android:layout_margin="5dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Desc:"
                 android:id="@+id/task_desc_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:singleLine="false"
+                android:text="Task Desc:"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
                 android:id="@+id/task_desc_value"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp" />
 
         </LinearLayout>
-
-        <include
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/action_item"
-            android:id="@+id/action_list_title" />
 
         <ListView
             android:layout_width="fill_parent"
@@ -107,7 +85,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="70dp"
+            android:layout_height="139dp"
             android:background="@color/gray" >
 
             <TextView

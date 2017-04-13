@@ -3,6 +3,7 @@ package com.project.icube.eqa;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
@@ -65,6 +66,10 @@ public class TaskMgr {
         public static final String STATUS_WORKING = "st_working";
         public static final String STATUS_END = "st_end";
     }
+
+    public static final String STATUS_START = "0";
+    public static final String STATUS_URGENT = "1";
+    public static final String STATUS_DONE = "2";
 
     public TaskMgr(Context context) {
         db = new SQLiteHelper(context);
@@ -138,16 +143,16 @@ public class TaskMgr {
         db.DeleteDB(ActionEntry.ACTION_TABLE_NAME, null, null);
     }
 
-    public String getStatusDesc(String no) {
+    public int getStatusColor(String no) {
         switch (no) {
-            case "0":
-                return "Create";
-            case "1":
-                return "Working";
-            case "2":
-                return "Done";
+            case STATUS_START:
+                return R.color.task_start;
+            case STATUS_URGENT:
+                return R.color.task_urgent;
+            case STATUS_DONE:
+                return R.color.task_done;
             default:
-                return "None";
+                return R.color.task_start;
         }
     }
 
@@ -279,7 +284,7 @@ public class TaskMgr {
 
         db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
     }
-
+/*
     public String nextStatus(String status) {
         String newStatus = "0";
         switch (status) {
@@ -294,7 +299,7 @@ public class TaskMgr {
         }
         return newStatus;
     }
-
+*/
     public void sample() {
         Task task1 = new Task(1, "eQA Project - Implement a task reminder system.", "work", "project", "0", "obj", "erp", "1", "0", "0", "2016-10-07", 1, "2016-10-07", "0", "eQa", "no issue", "2016-10-05", "2016-10-05", "2016-10-05", "2016-10-05", 2);
         Task task2 = new Task(2, "My personal website", "work", "personal", "0", "obj", "erp", "1", "0", "0", "2016-10-01", 1, "2016-11-01", "0", "eQa", "no issue", "2016-10-05", "2016-10-05", "2016-10-05", "2016-10-05", 2);
