@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -82,22 +83,6 @@ public class TaskMenuActivity extends AppCompatActivity {
         String type_name = bundle.getString(MainActivity.TYPE_NAME);
         txtCategType.setText(categ_name + " / " + type_name);
 
-        /* Task list title */
-        LinearLayout layout = (LinearLayout) findViewById(R.id.task_list_title);
-        layout.setBackgroundColor(getResources().getColor(R.color.gray));
-
-        TextView txtNoTitle = (TextView) findViewById(R.id.task_no);
-        txtNoTitle.setText("#");
-
-        TextView txtDescTitle = (TextView) findViewById(R.id.task_desc);
-        txtDescTitle.setText("Desc");
-
-        TextView txtETDTitle = (TextView) findViewById(R.id.task_etd);
-        txtETDTitle.setText("ETD");
-
-        TextView txtStatusTitle = (TextView) findViewById(R.id.task_status);
-        txtStatusTitle.setText("Status");
-
         /* Task list contents */
         lstTasks = taskMgr.getTasks(categ_name, type_name);
         ArrayAdapter<TaskMgr.Task> adapter = new TaskAdapter(context, R.id.taskList, R.layout.task_item, lstTasks);
@@ -108,13 +93,6 @@ public class TaskMenuActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 select(position);
-            }
-        });
-        taskList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                open(position);
-                return true;
             }
         });
 
@@ -140,15 +118,6 @@ public class TaskMenuActivity extends AppCompatActivity {
 
         /* task description */
         txtDescValue = (TextView) findViewById(R.id.task_desc_value);
-
-        /* buttons */
-        imgGo = (ImageButton) findViewById(R.id.imgGo);
-        imgGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                open(index);
-            }
-        });
 
         imgBtn2 = (ImageButton) findViewById(R.id.imgBtn2);
         imgNote = (ImageButton) findViewById(R.id.imgNote);
@@ -237,18 +206,24 @@ public class TaskMenuActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             TaskMgr.Task current = lstTasks.get(position);
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.task_item, null);
-            TextView taskNo = (TextView) view.findViewById(R.id.task_no);
-            taskNo.setText(String.valueOf(current.getNo()));
             TextView taskDesc = (TextView) view.findViewById(R.id.task_desc);
             taskDesc.setText(current.getDesc());
             TextView taskEtd = (TextView) view.findViewById(R.id.task_etd);
             taskEtd.setText(current.getEtd());
-            TextView taskStatus = (TextView) view.findViewById(R.id.task_status);
-            taskStatus.setText(taskMgr.getStatusDesc(current.getStatus()));
+            ImageView taskEnter = (ImageView) view.findViewById(R.id.task_enter);
+            if (taskMgr.getActions(lstTasks.get(position).getNo()).size() == 0) {
+                taskEnter.setVisibility(View.INVISIBLE);
+            }
+            taskEnter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    open(position);
+                }
+            });
             return view;
         }
     }

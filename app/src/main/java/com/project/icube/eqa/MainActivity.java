@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             taskMgr.deleteAllTasks();
             taskMgr.deleteAllActions();
         }*/
-        taskMgr.sample();
+        //taskMgr.sample();
 
         initUI();
     }

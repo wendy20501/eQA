@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,32 +56,13 @@ public class TaskActivity extends AppCompatActivity {
         strUser = bundle.getString(MainActivity.USER_NAME);
         txtUser.setText(strUser);
 
-        /* Task no and desc */
-        TextView txtTaskNo = (TextView) findViewById(R.id.task_no_value);
-        intTaskNo = bundle.getInt(TaskMenuActivity.TASK_NO);
-        txtTaskNo.setText(String.valueOf(intTaskNo));
-
+        /* task desc */
         TextView txtTaskDesc = (TextView) findViewById(R.id.task_desc_value);
         String strTaskDesc = bundle.getString(TaskMenuActivity.TASK_DESC);
         txtTaskDesc.setText(strTaskDesc);
 
-        /* Action list title */
-        LinearLayout layout = (LinearLayout) findViewById(R.id.action_list_title);
-        layout.setBackgroundColor(getResources().getColor(R.color.gray));
-
-        TextView txtNoTitle = (TextView) findViewById(R.id.action_no);
-        txtNoTitle.setText("#");
-
-        final TextView txtDescTitle = (TextView) findViewById(R.id.action_desc);
-        txtDescTitle.setText("Desc");
-
-        TextView txtOwnerTitle = (TextView) findViewById(R.id.action_owner);
-        txtOwnerTitle.setText("Owner");
-
-        final TextView txtStatusTitle = (TextView) findViewById(R.id.action_status);
-        txtStatusTitle.setText("Status");
-
         /* Action list contents */
+        intTaskNo = bundle.getInt(TaskMenuActivity.TASK_NO);
         lstActions = taskMgr.getActions(intTaskNo);
         ifEmpty = lstActions.isEmpty();
 
@@ -134,17 +116,9 @@ public class TaskActivity extends AppCompatActivity {
     private void updateStatus() {
         ifStart = true;
         TaskMgr.Action current = lstActions.get(index);
-        String newStatus = taskMgr.nextStatus(current.getStatus());
-        if (newStatus != null) {
-            taskMgr.UpdateActionStatus(current, newStatus);
-            current.setStatus(newStatus);
-            adpAction.notifyDataSetChanged();
-            for (int i = 0; i < lstActions.size(); i++) {
-                if (!lstActions.get(i).getStatus().equals("2"))
-                    return;
-            }
-            
-        }
+        taskMgr.UpdateActionStatus(current, TaskMgr.STATUS_DONE);
+        current.setStatus(TaskMgr.STATUS_DONE);
+        adpAction.notifyDataSetChanged();
     }
 
     private void setDefault() {
@@ -184,8 +158,8 @@ public class TaskActivity extends AppCompatActivity {
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.action_item, null);
 
-            TextView txtNo = (TextView) view.findViewById(R.id.action_no);
-            txtNo.setText(String.valueOf(current.getNo()));
+            ImageView imgStatus = (ImageView) view.findViewById(R.id.action_status);
+            imgStatus.setBackgroundColor(getResources().getColor(taskMgr.getStatusColor(current.getStatus())));
 
             TextView txtDesc = (TextView) view.findViewById(R.id.action_desc);
             txtDesc.setText(current.getDesc());
@@ -193,8 +167,8 @@ public class TaskActivity extends AppCompatActivity {
             TextView txtOwner = (TextView) view.findViewById(R.id.action_owner);
             txtOwner.setText(current.getOwner());
 
-            TextView txtStatus = (TextView) view.findViewById(R.id.action_status);
-            txtStatus.setText(taskMgr.getStatusDesc(current.getStatus()));
+            TextView txtTime = (TextView) view.findViewById(R.id.action_time);
+            txtTime.setText(current.getDadded() + " to " + current.getEtd());
 
             return view;
         }
