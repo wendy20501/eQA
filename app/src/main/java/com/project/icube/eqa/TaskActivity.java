@@ -56,12 +56,7 @@ public class TaskActivity extends AppCompatActivity {
         strUser = bundle.getString(MainActivity.USER_NAME);
         txtUser.setText(strUser);
 
-        /* Task no and desc */
-        /*
-        TextView txtTaskNo = (TextView) findViewById(R.id.task_no_value);
-
-        txtTaskNo.setText(String.valueOf(intTaskNo));
-*/
+        /* task desc */
         TextView txtTaskDesc = (TextView) findViewById(R.id.task_desc_value);
         String strTaskDesc = bundle.getString(TaskMenuActivity.TASK_DESC);
         txtTaskDesc.setText(strTaskDesc);
@@ -121,18 +116,9 @@ public class TaskActivity extends AppCompatActivity {
     private void updateStatus() {
         ifStart = true;
         TaskMgr.Action current = lstActions.get(index);
-        //String newStatus = taskMgr.nextStatus(current.getStatus());
-        //if (newStatus != null) {
-            taskMgr.UpdateActionStatus(current, TaskMgr.STATUS_DONE);
-            current.setStatus(TaskMgr.STATUS_DONE);
-            adpAction.notifyDataSetChanged();
-        /*
-            for (int i = 0; i < lstActions.size(); i++) {
-                if (!lstActions.get(i).getStatus().equals("2"))
-                    return;
-            }
-         */
-        //}
+        taskMgr.UpdateActionStatus(current, TaskMgr.STATUS_DONE);
+        current.setStatus(TaskMgr.STATUS_DONE);
+        adpAction.notifyDataSetChanged();
     }
 
     private void setDefault() {
