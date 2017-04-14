@@ -284,22 +284,7 @@ public class TaskMgr {
 
         db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
     }
-/*
-    public String nextStatus(String status) {
-        String newStatus = "0";
-        switch (status) {
-            case "0":
-                newStatus = "1";
-                break;
-            case "1":
-                newStatus = "2";
-                break;
-            default:
-                return null;
-        }
-        return newStatus;
-    }
-*/
+
     public void sample() {
         Task task1 = new Task(1, "eQA Project - Implement a task reminder system.", "work", "project", "0", "obj", "erp", "1", "0", "0", "2016-10-07", 1, "2016-10-07", "0", "eQa", "no issue", "2016-10-05", "2016-10-05", "2016-10-05", "2016-10-05", 2);
         Task task2 = new Task(2, "My personal website", "work", "personal", "0", "obj", "erp", "1", "0", "0", "2016-10-01", 1, "2016-11-01", "0", "eQa", "no issue", "2016-10-05", "2016-10-05", "2016-10-05", "2016-10-05", 2);
