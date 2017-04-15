@@ -35,7 +35,6 @@ public class TaskActivity extends AppCompatActivity {
     private TextView txtActionDesc;
     private boolean ifEmpty;
     private Button btnDone;
-    private boolean ifStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +113,6 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     private void updateStatus() {
-        ifStart = true;
         TaskMgr.Action current = lstActions.get(index);
         taskMgr.UpdateActionStatus(current, TaskMgr.STATUS_DONE);
         current.setStatus(TaskMgr.STATUS_DONE);
@@ -126,7 +124,6 @@ public class TaskActivity extends AppCompatActivity {
         if (!ifEmpty) {
             select(index);
         }
-        ifStart = false;
     }
 
     private void select(int pos) {
