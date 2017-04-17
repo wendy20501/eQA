@@ -18,6 +18,7 @@
         android:weightSum="1">
 
         <LinearLayout
+            android:id="@+id/categ_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/icubeHeader"
@@ -31,7 +32,8 @@
                 android:layout_weight="1"
                 android:text="Category"
                 android:textColor="@color/colorWhite"
-                android:textSize="18sp" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/type_name"
@@ -40,7 +42,8 @@
                 android:layout_weight="1"
                 android:text="Type"
                 android:textColor="@color/colorWhite"
-                android:textSize="12sp" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

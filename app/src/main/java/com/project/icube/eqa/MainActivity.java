@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
-    private class CategAdapter extends BaseExpandableListAdapter {
+    public static class CategAdapter extends BaseExpandableListAdapter {
         private Context context;
         private List<String> listDataHeader;
         private HashMap<String, List<String>> mapDataChild;
