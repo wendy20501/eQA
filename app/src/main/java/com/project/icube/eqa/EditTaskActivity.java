@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ public class EditTaskActivity extends AppCompatActivity {
     private HashMap<String, List<String>> mapTypes;
     private TextView txtCateg, txtType;
     private int iCateg, iType;
+    private DatePicker dateStartPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +80,16 @@ public class EditTaskActivity extends AppCompatActivity {
             }
         });
 
+        /* date picker */
+        dateStartPicker = (DatePicker) findViewById(R.id.dp_strat);
 
 
     }
 
     private void updateCategType() {
-        txtCateg.setText(lstCategs.get(iCateg));
-        txtType.setText(mapTypes.get(iCateg).get(iType));
+        String newCateg = lstCategs.get(iCateg);
+        txtCateg.setText(newCateg);
+        txtType.setText(mapTypes.get(newCateg).get(iType));
     }
 
 }
