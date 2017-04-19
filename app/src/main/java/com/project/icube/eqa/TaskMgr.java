@@ -178,7 +178,6 @@ public class TaskMgr {
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
-            task_no_count = Math.max(cursor.getInt(0), task_no_count);
             result.add(new Task(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
                     cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getString(9),
                     cursor.getString(10), cursor.getInt(11), cursor.getString(12), cursor.getString(13), cursor.getString(14) ,
@@ -253,6 +252,7 @@ public class TaskMgr {
             String newTaskNo = cursor.getString(2);
             String newTaskDesc = cursor.getString(3);
             int index = categ_names.indexOf(newCateg);
+            task_no_count = Math.max(Integer.parseInt(newTaskNo), task_no_count);
             if (index != -1) {
                 result.get(index).addTask(newType, new Task(Integer.parseInt(newTaskNo), newTaskDesc));
             } else {
