@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
@@ -18,32 +19,48 @@
         android:weightSum="1">
 
         <LinearLayout
-            android:id="@+id/categ_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/icubeHeader"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
-            <TextView
-                android:id="@+id/categ_name"
+            <LinearLayout
+                android:id="@+id/categ_type"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_weight="1.13">
+
+                <TextView
+                    android:id="@+id/categ_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Category"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/type_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Type"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/add_categ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Category"
-                android:textColor="@color/colorWhite"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/type_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Type"
-                android:textColor="@color/colorWhite"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:padding="20dp"
+                app:srcCompat="@drawable/plus_symbol" />
 
         </LinearLayout>
 
