@@ -17,6 +17,7 @@ import java.util.Map;
 public class TaskMgr {
     private static TaskMgr instance = null;
     private DBHelper db;
+    private static int task_no_count = 0;
 
     public static abstract class TaskEntry implements BaseColumns {
         public static final String TASK_TABLE_NAME = "taskhd";
@@ -106,7 +107,7 @@ public class TaskMgr {
         cv.put(TaskEntry.TASK_ALERT_DAYS, newTask.getAlertdays());
 
         long id = db.InsertDB(TaskEntry.TASK_TABLE_NAME, null, cv);
-        newTask.setId(id);
+        //newTask.setId(id);
         return newTask;
     }
 
@@ -131,7 +132,7 @@ public class TaskMgr {
         cv.put(ActionEntry.ACTION_TYPE_ID, newAction.getType_id());
 
         long id = db.InsertDB(ActionEntry.ACTION_TABLE_NAME, null, cv);
-        newAction.setId(id);
+        //newAction.setId(id);
         return newAction;
     }
 
@@ -177,6 +178,7 @@ public class TaskMgr {
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
+            task_no_count = Math.max(cursor.getInt(0), task_no_count);
             result.add(new Task(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
                     cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getString(9),
                     cursor.getString(10), cursor.getInt(11), cursor.getString(12), cursor.getString(13), cursor.getString(14) ,
@@ -357,7 +359,7 @@ public class TaskMgr {
         }
     }
 
-    public class Task {
+    public static class Task {
         private long id;
         private int no;
         private String desc;
@@ -384,6 +386,33 @@ public class TaskMgr {
         public Task(int no, String desc) {
             this.no = no;
             this.desc = desc;
+        }
+
+        //add new task
+        public Task(String desc, String categ, String type, String etd, int dleft, String dend,
+                    String dadded, String uadded, String dedited, String uedited) {
+            this.no = task_no_count + 1;
+            task_no_count++;
+            this.desc = desc;
+            this.categ = categ;
+            this.type = type;
+            this.status = STATUS_START;
+            this.object = "obj";
+            this.erp = "erp";
+            this.priority = "1";
+            this.numdoc = "0";
+            this.numact = "0";
+            this.etd = etd;
+            this.dleft = dleft;
+            this.dend = dend;
+            this.alert = "1";
+            this.tknote = "";
+            this.tkissue = "no issue";
+            this.dadded = dadded;
+            this.uadded = uadded;
+            this.dedited = dedited;
+            this.uedited = uedited;
+            this.alertdays = 2;
         }
 
         public Task(int no, String desc, String categ, String type, String status,
@@ -414,9 +443,9 @@ public class TaskMgr {
             this.alertdays = alertdays;
         }
 
-        public void setId(long id) {
+        /*public void setId(long id) {
             this.id = id;
-        }
+        }*/
 
         public int getNo() {
             return no;
@@ -550,11 +579,11 @@ public class TaskMgr {
             this.category_id = category_id;
             this.type_id = type_id;
         }
-
+/*
         public void setId(long id) {
             this.id = id;
         }
-
+*/
         public int getTaskNo() {
             return task_no;
         }
