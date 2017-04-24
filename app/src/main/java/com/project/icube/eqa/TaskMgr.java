@@ -1,9 +1,14 @@
 package com.project.icube.eqa;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.ContentObservable;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Handler;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
@@ -15,9 +20,12 @@ import java.util.Map;
  * Created by yiwenwang on 2016/10/3.
  */
 public class TaskMgr {
+    private ContentResolver mResolver;
     private static TaskMgr instance = null;
-    private DBHelper db;
     private static int task_no_count = 0;
+    public static final String AUTHORITY = "com.project.icube.eqa";
+    public static final Uri TASK_URI = Uri.parse("content://" + AUTHORITY + "/" + TaskEntry.TASK_TABLE_NAME);
+    public static final Uri ACTION_URI = Uri.parse("content://" + AUTHORITY + "/" + ActionEntry.ACTION_TABLE_NAME);
 
     public static abstract class TaskEntry implements BaseColumns {
         public static final String TASK_TABLE_NAME = "taskhd";
@@ -73,7 +81,7 @@ public class TaskMgr {
     public static final String STATUS_DONE = "2";
 
     public TaskMgr(Context context) {
-        db = new SQLiteHelper(context);
+        mResolver = context.getContentResolver();
     }
 
     public static TaskMgr getInstance(Context context) {
@@ -106,7 +114,8 @@ public class TaskMgr {
         cv.put(TaskEntry.TASK_UEDITED, newTask.getUedited());
         cv.put(TaskEntry.TASK_ALERT_DAYS, newTask.getAlertdays());
 
-        long id = db.InsertDB(TaskEntry.TASK_TABLE_NAME, null, cv);
+        //long id = db.InsertDB(TaskEntry.TASK_TABLE_NAME, null, cv);
+        mResolver.insert(TASK_URI, cv);
         //newTask.setId(id);
         return newTask;
     }
@@ -131,17 +140,20 @@ public class TaskMgr {
         cv.put(ActionEntry.ACTION_CATEGORY_ID, newAction.getCategory_id());
         cv.put(ActionEntry.ACTION_TYPE_ID, newAction.getType_id());
 
-        long id = db.InsertDB(ActionEntry.ACTION_TABLE_NAME, null, cv);
+        //long id = db.InsertDB(ActionEntry.ACTION_TABLE_NAME, null, cv);
+        mResolver.insert(ACTION_URI, cv);
         //newAction.setId(id);
         return newAction;
     }
 
     public void deleteAllTasks() {
-        db.DeleteDB(TaskEntry.TASK_TABLE_NAME, null, null);
+        //db.DeleteDB(TaskEntry.TASK_TABLE_NAME, null, null);
+        mResolver.delete(TASK_URI, null, null);
     }
 
     public void deleteAllActions() {
-        db.DeleteDB(ActionEntry.ACTION_TABLE_NAME, null, null);
+        //db.DeleteDB(ActionEntry.ACTION_TABLE_NAME, null, null);
+        mResolver.delete(ACTION_URI, null, null);
     }
 
     public int getStatusColor(String no) {
@@ -159,7 +171,8 @@ public class TaskMgr {
 
     public Task getTask(int no) {
         String where = TaskEntry.TASK_NO + "=" + no;
-        Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
+        //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
+        Cursor cursor = mResolver.query(TASK_URI, null, where, null, null);
         Task result = null;
         if (cursor.moveToFirst()) {
             result = new Task(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
@@ -174,11 +187,11 @@ public class TaskMgr {
     public List<Task> getTasks(String categName, String typeName) {
         List<Task> result = new ArrayList<Task>();
         String where = TaskEntry.TASK_CATEGORY + " = '" + categName + "' AND " + TaskEntry.TASK_TYPE + " = '" + typeName + "'";
-        Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
+        //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
+        Cursor cursor = mResolver.query(TASK_URI, null, where, null, null);
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
-            task_no_count = Math.max(cursor.getInt(0), task_no_count);
             result.add(new Task(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
                     cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getString(9),
                     cursor.getString(10), cursor.getInt(11), cursor.getString(12), cursor.getString(13), cursor.getString(14) ,
@@ -192,7 +205,8 @@ public class TaskMgr {
     public List<Action> getActions(int taskNo) {
         List<Action> result = new ArrayList<Action>();
         String where = TaskEntry.TASK_NO + " = '" + taskNo + "'";
-        Cursor cursor = db.QueryDB(ActionEntry.ACTION_TABLE_NAME, null, where, null, null, null, null);
+        //Cursor cursor = db.QueryDB(ActionEntry.ACTION_TABLE_NAME, null, where, null, null, null, null);
+        Cursor cursor = mResolver.query(ACTION_URI, null, where, null, null);
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
@@ -209,7 +223,8 @@ public class TaskMgr {
     public List<String> getTaskDescs(String categName, String typeName) {
         List<String> result = new ArrayList<String>();
         String where = TaskEntry.TASK_CATEGORY + " = '" + categName + "' AND " + TaskEntry.TASK_TYPE + " = '" + typeName + "'";
-        Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
+        //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
+        Cursor cursor = mResolver.query(TASK_URI, null, where, null, null);
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
@@ -223,7 +238,8 @@ public class TaskMgr {
     public List<String> getActionDescs(int TaskNo) {
         List<String> result = new ArrayList<String>();
         String where = TaskEntry.TASK_NO + " = '" + TaskNo + "'";
-        Cursor cursor = db.QueryDB(ActionEntry.ACTION_TABLE_NAME, null, where, null, null, null, null);
+        //Cursor cursor = db.QueryDB(ActionEntry.ACTION_TABLE_NAME, null, where, null, null, null, null);
+        Cursor cursor = mResolver.query(ACTION_URI, null, where, null, null);
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
@@ -244,7 +260,8 @@ public class TaskMgr {
         cols[2] = TaskEntry.TASK_NO;
         cols[3] = TaskEntry.TASK_DESCRIPTION;
 
-        Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, cols, null, null, null, null, null);
+        //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, cols, null, null, null, null, null);
+        Cursor cursor = mResolver.query(TASK_URI, cols, null, null, null);
         int rows = cursor.getCount();
         cursor.moveToFirst();
         for (int i = 0; i < rows; i++) {
@@ -253,6 +270,7 @@ public class TaskMgr {
             String newTaskNo = cursor.getString(2);
             String newTaskDesc = cursor.getString(3);
             int index = categ_names.indexOf(newCateg);
+            task_no_count = Math.max(Integer.parseInt(newTaskNo), task_no_count);
             if (index != -1) {
                 result.get(index).addTask(newType, new Task(Integer.parseInt(newTaskNo), newTaskDesc));
             } else {
@@ -267,24 +285,14 @@ public class TaskMgr {
         return result;
     }
 
-    public int GetTaskCount() {
-        int result = 0;
-        Cursor cursor = db.RawQuery("SELECT COUNT(*) FROM " + TaskEntry.TASK_TABLE_NAME, null);
-
-        if (cursor.moveToNext()) {
-            result = cursor.getInt(0);
-        }
-
-        return result;
-    }
-
     public void UpdateActionStatus(Action action, String status) {
         ContentValues value = new ContentValues();
         value.put(ActionEntry.ACTION_STATUS, status);
 
         String selection = ActionEntry.ACTION_NO + "=" + String.valueOf(action.no);
 
-        db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
+        //db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
+        mResolver.update(ACTION_URI, value, selection, null);
     }
 
     public void sample() {

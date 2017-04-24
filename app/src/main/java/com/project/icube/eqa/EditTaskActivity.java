@@ -5,10 +5,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +35,7 @@ public class EditTaskActivity extends AppCompatActivity {
     private int iCateg, iType;
     private EditText ed_Desc;
     private DatePicker dateStartPicker, dateEndPicker;
+    private AutoCompleteTextView atCateg, atType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,59 @@ public class EditTaskActivity extends AppCompatActivity {
             }
         });
 
+        ImageView imgAddCateg = (ImageView) findViewById(R.id.add_categ);
+        imgAddCateg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater lf = LayoutInflater.from(context);
+                final View vCategType = lf.inflate(R.layout.new_categ_type, null);
+
+                ArrayAdapter<String> adCateg = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, lstCategs);
+                atCateg = (AutoCompleteTextView) vCategType.findViewById(R.id.new_categ_name);
+                atCateg.setThreshold(1);
+                atCateg.setAdapter(adCateg);
+                atCateg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            String str = atCateg.getText().toString();
+                            if (lstCategs.contains(str)) {
+                                ArrayAdapter<String> adType = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, mapTypes.get(str));
+                                atType.setAdapter(adType);
+                            }
+                        }
+                    }
+                });
+
+                atType = (AutoCompleteTextView) vCategType.findViewById(R.id.new_type_name);
+                atType.setThreshold(1);
+
+
+                new AlertDialog.Builder(context)
+                        .setView(vCategType)
+                        .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (atCateg.getText().toString().matches(""))
+                                    Toast.makeText(context, "Please enter category.", Toast.LENGTH_SHORT).show();
+                                else if (atType.getText().toString().matches(""))
+                                    Toast.makeText(context, "Please enter type.", Toast.LENGTH_SHORT).show();
+                                else {
+                                    txtCateg.setText(atCateg.getText().toString());
+                                    txtType.setText(atType.getText().toString());
+                                }
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(context, "Category and type are not changed.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
+            }
+        });
+
         /* date picker */
         dateStartPicker = (DatePicker) findViewById(R.id.dp_strat);
         dateEndPicker = (DatePicker) findViewById(R.id.dp_end);
@@ -125,7 +183,7 @@ public class EditTaskActivity extends AppCompatActivity {
                 } else if (start.getTime().getTime() > end.getTime().getTime() || today.getTime().getTime() > end.getTime().getTime()) {
                     Toast.makeText(context, "Please enter reasonable end date!", Toast.LENGTH_SHORT).show();
                 } else {
-                    TaskMgr.Task newTask = new TaskMgr.Task(strDesc, lstCategs.get(iCateg), mapTypes.get(lstCategs.get(iCateg)).get(iType),
+                    TaskMgr.Task newTask = new TaskMgr.Task(strDesc, txtCateg.getText().toString(), txtType.getText().toString(),
                             strEnd, getDayLeft(start.getTime(), end.getTime()), strEnd, strStart, strStart,
                             strStart, strStart);
                     taskMgr.insertTask(newTask);
