@@ -3,7 +3,10 @@ package com.project.icube.eqa;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,16 +35,13 @@ public class MainActivity extends AppCompatActivity {
     HashMap<String, List<String>> mapTypes;
     List<String> lstCategs;
     String strUserName;
-    public static final String CATEG_NAME_LIST = "ListOfCategoryName";
     public static final String CATEG_NAME = "strTaskCategName";
     public static final String TYPE_NAME = "strTaskTypeName";
-    public static final String TASK_NO = "intTaskNo";
-    public static final String TASK_DESC = "strTaskDescription";
-    public static final String TASK_STATUS = "strTaskStatus";
-    public static final String TASK_ETD = "strTaskETD";
-    public static final String TASK_DLEFT = "intTaskDayLeft";
-    public static final String TASK_DEND = "strTaskDayEnd";
     public static final String USER_NAME = "strUserName";
+    private ExpandableListView categList;
+    private CategAdapter adapter;
+    private TaskContentObserver mTaskObserver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +69,42 @@ public class MainActivity extends AppCompatActivity {
         //taskMgr.sample();
 
         initUI();
+        mTaskObserver = new TaskContentObserver(mHandler);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getContentResolver().registerContentObserver(TaskMgr.TASK_URI, true, mTaskObserver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mTaskObserver != null) {
+            getContentResolver().unregisterContentObserver(mTaskObserver);
+            mTaskObserver = null;
+        }
+    }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            updateCategData();
+            adapter.notifyDataSetChanged();
+        }
+    };
+
+    private void updateCategData() {
+        List<TaskMgr.Categ> categs = taskMgr.getCategories();
+        for (int i = 0; i < categs.size(); i++) {
+            TaskMgr.Categ current = categs.get(i);
+            if (!lstCategs.contains(current.getName())) {
+                mapTypes.put(current.getName(), current.getTypes());
+                lstCategs.add(current.getName());
+            }
+        }
     }
 
     private void initUI() {
@@ -84,9 +120,8 @@ public class MainActivity extends AppCompatActivity {
             mapTypes.put(current.getName(), current.getTypes());
             lstCategs.add(current.getName());
         }
-
-        CategAdapter adapter = new CategAdapter(this, lstCategs, mapTypes);
-        final ExpandableListView categList = (ExpandableListView) findViewById(R.id.category_lst);
+        adapter = new CategAdapter(this, lstCategs, mapTypes);
+        categList = (ExpandableListView) findViewById(R.id.category_lst);
 
         categList.setAdapter(adapter);
         categList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {

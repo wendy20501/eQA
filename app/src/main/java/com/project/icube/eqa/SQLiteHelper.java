@@ -1,47 +1,67 @@
 package com.project.icube.eqa;
 
+import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by yiwenwang on 2016/10/3.
  */
-public class SQLiteHelper implements DBHelper {
-    private SQLiteDatabase db;
+public class SQLiteHelper extends ContentProvider {
+    private SQLiteOpenHelper mDBHelper;
 
+    @Override
+    public boolean onCreate() {
+        mDBHelper = new MyDBOpenHelper(getContext());
+        return true;
+    }
 
-    public SQLiteHelper(Context context) {
-        SQLiteOpenHelper mDBHelper = new MyDBOpenHelper(context);
-        db = mDBHelper.getWritableDatabase();
+    @Nullable
+    @Override
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        Cursor result = db.query(uri.getLastPathSegment(), projection, selection, selectionArgs, null, null, null);
+        result.setNotificationUri(getContext().getContentResolver(), uri);
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        long rowId = db.insert(uri.getLastPathSegment(), TaskMgr.TaskEntry.TASK_NO, values);
+        Uri newUri = ContentUris.withAppendedId(TaskMgr.TASK_URI, rowId);
+        getContext().getContentResolver().notifyChange(newUri, null);
+        return newUri;
     }
 
     @Override
-    public long InsertDB(String table_name, String col_name, ContentValues content) {
-        return db.insert(table_name, col_name, content);
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        return db.delete(uri.getLastPathSegment(), selection, selectionArgs);
     }
 
     @Override
-    public void UpdateDB(String table_name, ContentValues content, String selection, String[] selectionArgs) {
-        db.update(table_name, content, selection, selectionArgs);
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        return db.update(uri.getLastPathSegment(), values, selection, selectionArgs);
     }
 
-    @Override
-    public void DeleteDB(String table_name, String whereClause, String[] whereArgs) {
-        db.delete(table_name, whereClause, whereArgs);
+    public Cursor rowquery(String sql, String[] selectionArgs) {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        return db.rawQuery(sql, selectionArgs);
     }
-
-    @Override
-    public Cursor QueryDB(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
-        return db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
-    }
-
-    @Override
-    public Cursor RawQuery(String sql, String[] selecArgs) {
-        return db.rawQuery(sql, selecArgs);
-    }
-
-
 }
