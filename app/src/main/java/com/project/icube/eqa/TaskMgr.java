@@ -20,7 +20,7 @@ import java.util.Map;
  * Created by yiwenwang on 2016/10/3.
  */
 public class TaskMgr {
-    private ContentResolver mResolver;
+        private ContentResolver mResolver;
     private static TaskMgr instance = null;
     private static int task_no_count = 0;
     public static final String AUTHORITY = "com.project.icube.eqa";
@@ -118,6 +118,17 @@ public class TaskMgr {
         mResolver.insert(TASK_URI, cv);
         //newTask.setId(id);
         return newTask;
+    }
+
+    public void deleteTask(int iTaskNo) {
+        String where = TaskEntry.TASK_NO + "=" + iTaskNo;
+        mResolver.delete(ACTION_URI, where, null);
+        mResolver.delete(TASK_URI, where, null);
+    }
+
+    public void deleteAction(int iActionNo) {
+        String where = ActionEntry.ACTION_NO + "=" + iActionNo;
+        mResolver.delete(ACTION_URI, where, null);
     }
 
     public Action insertAction(Action newAction) {

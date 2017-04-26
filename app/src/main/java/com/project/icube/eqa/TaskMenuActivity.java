@@ -2,10 +2,12 @@ package com.project.icube.eqa;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,14 +40,16 @@ public class TaskMenuActivity extends AppCompatActivity {
     private List<String> lstTaskDescs;
     private List<TaskMgr.Task> lstTasks;
     private ListView taskList;
+    private ArrayAdapter<TaskMgr.Task> adTask;
     private String strUser;
     private TextView txtDescValue;
     private AutoCompleteTextView txtSearch;
     private int index;
-    private ImageButton imgGo;
+    private ImageButton imgBtn1;
     private ImageButton imgBtn2;
     private ImageButton imgNote;
     private ImageButton imgDoc;
+    private AlertDialog.Builder adDelete;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -85,14 +89,37 @@ public class TaskMenuActivity extends AppCompatActivity {
 
         /* Task list contents */
         lstTasks = taskMgr.getTasks(categ_name, type_name);
-        ArrayAdapter<TaskMgr.Task> adapter = new TaskAdapter(context, R.id.taskList, R.layout.task_item, lstTasks);
+        adTask = new TaskAdapter(context, R.id.taskList, R.layout.task_item, lstTasks);
 
         taskList = (ListView) findViewById(R.id.taskList);
-        taskList.setAdapter(adapter);
+        taskList.setAdapter(adTask);
         taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 select(position);
+            }
+        });
+        taskList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                adDelete.show();
+                return false;
+            }
+        });
+
+        adDelete = new AlertDialog.Builder(this);
+        adDelete.setTitle("Delete task");
+        adDelete.setMessage("1 task and all the related actions will be deleted.");
+        adDelete.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+        adDelete.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                delete(index);
             }
         });
 
@@ -135,6 +162,14 @@ public class TaskMenuActivity extends AppCompatActivity {
         taskList.requestFocus();
         hideKeyboard(TaskMenuActivity.this);
         txtDescValue.setText(lstTasks.get(index).getDesc());
+    }
+
+    private void delete(int position) {
+        taskMgr.deleteTask(lstTasks.get(position).getNo());
+        lstTasks.remove(position);
+        adTask.notifyDataSetChanged();
+        if (lstTasks.size() == 0)
+            this.finish();
     }
 
     private void hideKeyboard(Activity activity) {

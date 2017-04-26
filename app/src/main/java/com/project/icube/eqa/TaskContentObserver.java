@@ -24,8 +24,6 @@ public class TaskContentObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
-        Message msg = new Message();
-        msg.what = 1;
-        mHadler.sendMessage(msg);
+        mHadler.sendMessage(new Message());
     }
 }

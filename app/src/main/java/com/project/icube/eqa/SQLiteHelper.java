@@ -51,13 +51,17 @@ public class SQLiteHelper extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        return db.delete(uri.getLastPathSegment(), selection, selectionArgs);
+        int result = db.delete(uri.getLastPathSegment(), selection, selectionArgs);
+        getContext().getContentResolver().notifyChange(uri, null);
+        return result;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        return db.update(uri.getLastPathSegment(), values, selection, selectionArgs);
+        int result = db.update(uri.getLastPathSegment(), values, selection, selectionArgs);
+        getContext().getContentResolver().notifyChange(uri, null);
+        return result;
     }
 
     public Cursor rowquery(String sql, String[] selectionArgs) {
