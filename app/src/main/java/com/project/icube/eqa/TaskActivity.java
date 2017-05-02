@@ -1,7 +1,9 @@
 package com.project.icube.eqa;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,8 +35,8 @@ public class TaskActivity extends AppCompatActivity {
     private AutoCompleteTextView txtSearch;
     private int index;
     private TextView txtActionDesc;
-    private boolean ifEmpty;
     private Button btnDone;
+    private AlertDialog.Builder adList, adDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,20 +65,60 @@ public class TaskActivity extends AppCompatActivity {
         /* Action list contents */
         intTaskNo = bundle.getInt(DataColumns.TASK_NO);
         lstActions = taskMgr.getActions(intTaskNo);
-        ifEmpty = lstActions.isEmpty();
 
-        if (!ifEmpty) {
-            adpAction = new ActionAdapter(context, R.id.actionList, lstActions);
+        adpAction = new ActionAdapter(context, R.id.actionList, lstActions);
 
-            actionList = (ListView) findViewById(R.id.actionList);
-            actionList.setAdapter(adpAction);
-            actionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    select(position);
+        actionList = (ListView) findViewById(R.id.actionList);
+        actionList.setAdapter(adpAction);
+        actionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                select(position);
+            }
+        });
+        actionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                select(position);
+                adList.setTitle(lstActionDescs.get(index));
+                adList.show();
+                return false;
+            }
+        });
+
+        /* AlertDialog after long click */
+        final String[] listItem = {"Delete"};
+        adList = new AlertDialog.Builder(this);
+        adList.setItems(listItem, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        adDelete.show();
+                        break;
+                    default:
+                        break;
                 }
-            });
-        }
+            }
+        });
+
+        /* AlertDialog after click delete */
+        adDelete = new AlertDialog.Builder(this);
+        adDelete.setTitle("Delete action");
+        adDelete.setMessage("1 action will be deleted.");
+        adDelete.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+        adDelete.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                delete(index);
+            }
+        });
 
         /* Search for the actions */
         lstActionDescs = taskMgr.getActionDescs(intTaskNo);
@@ -121,9 +163,7 @@ public class TaskActivity extends AppCompatActivity {
 
     private void setDefault() {
         index = 0;
-        if (!ifEmpty) {
-            select(index);
-        }
+        select(index);
     }
 
     private void select(int pos) {
@@ -133,6 +173,18 @@ public class TaskActivity extends AppCompatActivity {
         actionList.setSelection(pos);
         hideKeyboard(TaskActivity.this);
         txtActionDesc.setText(lstActions.get(pos).getDesc());
+    }
+
+    private void delete(int position) {
+        taskMgr.deleteAction(intTaskNo, lstActions.get(position).getNo());
+        lstActions.remove(position);
+        adpAction.notifyDataSetChanged();
+        if (lstActions.size() == 0)
+            this.finish();
+        else if (position < lstActions.size())
+            select(position);
+        else
+            select(position - 1);
     }
 
     private void hideKeyboard(Activity activity) {
@@ -165,7 +217,7 @@ public class TaskActivity extends AppCompatActivity {
             txtOwner.setText(current.getOwner());
 
             TextView txtTime = (TextView) view.findViewById(R.id.action_time);
-            txtTime.setText(current.getDadded() + " to " + current.getEtd());
+            txtTime.setText(current.getEtd());
 
             return view;
         }

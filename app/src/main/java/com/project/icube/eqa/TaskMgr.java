@@ -76,8 +76,8 @@ public class TaskMgr {
         mResolver.delete(TASK_URI, where, null);
     }
 
-    public void deleteAction(int iActionNo) {
-        String where = DataColumns.ACTION_NO + "=" + iActionNo;
+    public void deleteAction(int iTaskNo, int iActionNo) {
+        String where = DataColumns.TASK_NO + "=" + iTaskNo + " AND " + DataColumns.ACTION_NO + "=" + iActionNo;
         mResolver.delete(ACTION_URI, where, null);
     }
 

@@ -55,4 +55,5 @@ public abstract class DataColumns implements BaseColumns {
     public static final String AUTHORITY = "com.project.icube.eqa";
 
     public static final String USER_NAME = "usrname";
+
 }

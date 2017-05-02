@@ -124,6 +124,8 @@ public class TaskMenuActivity extends AppCompatActivity {
                     case 1:
                         adDelete.show();
                         break;
+                    default:
+                        break;
                 }
             }
         });

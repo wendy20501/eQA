@@ -60,11 +60,11 @@ public class EditActionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int iStartYear = dateStartPicker.getYear();
-                int iStartMonth = dateStartPicker.getMonth();
+                int iStartMonth = dateStartPicker.getMonth() + 1;
                 int iStartDay = dateStartPicker.getDayOfMonth();
 
                 int iEndYear = dateEndPicker.getYear();
-                int iEndMonth = dateEndPicker.getMonth();
+                int iEndMonth = dateEndPicker.getMonth() + 1;
                 int iEndDay = dateEndPicker.getDayOfMonth();
 
                 String strStart = getDate(iStartYear, iStartMonth, iStartDay);
