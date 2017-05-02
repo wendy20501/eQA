@@ -35,9 +35,11 @@ public class MainActivity extends AppCompatActivity {
     HashMap<String, List<String>> mapTypes;
     List<String> lstCategs;
     String strUserName;
+    /*
     public static final String CATEG_NAME = "strTaskCategName";
     public static final String TYPE_NAME = "strTaskTypeName";
     public static final String USER_NAME = "strUserName";
+    */
     private ExpandableListView categList;
     private CategAdapter adapter;
     private TaskContentObserver mTaskObserver;
@@ -92,27 +94,13 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             updateCategData();
-            adapter.notifyDataSetChanged();
+            //adapter.notifyDataSetChanged();
         }
     };
 
     private void updateCategData() {
-        List<TaskMgr.Categ> categs = taskMgr.getCategories();
-        for (int i = 0; i < categs.size(); i++) {
-            TaskMgr.Categ current = categs.get(i);
-            if (!lstCategs.contains(current.getName())) {
-                mapTypes.put(current.getName(), current.getTypes());
-                lstCategs.add(current.getName());
-            }
-        }
-    }
 
-    private void initUI() {
-        strUserName = "Wendy Wang";
-        TextView txtUser = (TextView) findViewById(R.id.toolbar_user);
-        txtUser.setText(strUserName);
-
-        lstCategs = new ArrayList<String>();
+        lstCategs  = new ArrayList<String>();
         mapTypes = new HashMap<String, List<String>>();
         List<TaskMgr.Categ> categs = taskMgr.getCategories();
         for (int i = 0; i < categs.size(); i++) {
@@ -139,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Bundle bundle = new Bundle();
-                bundle.putString(CATEG_NAME, lstCategs.get(groupPosition));
-                bundle.putString(TYPE_NAME, mapTypes.get(lstCategs.get(groupPosition)).get(childPosition));
-                bundle.putString(USER_NAME, strUserName);
+                bundle.putString(DataColumns.TASK_CATEGORY, lstCategs.get(groupPosition));
+                bundle.putString(DataColumns.TASK_TYPE, mapTypes.get(lstCategs.get(groupPosition)).get(childPosition));
+                bundle.putString(DataColumns.USER_NAME, strUserName);
 
                 Intent intent = new Intent(context, TaskMenuActivity.class);
                 intent.putExtras(bundle);
@@ -149,7 +137,14 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
+    private void initUI() {
+        strUserName = "Wendy Wang";
+        TextView txtUser = (TextView) findViewById(R.id.toolbar_user);
+        txtUser.setText(strUserName);
+
+        updateCategData();
         /*
         ConnectionClass connection = new ConnectionClass();
         Connection conn = connection.CONN();

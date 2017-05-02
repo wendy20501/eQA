@@ -42,7 +42,7 @@ public class SQLiteHelper extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        long rowId = db.insert(uri.getLastPathSegment(), TaskMgr.TaskEntry.TASK_NO, values);
+        long rowId = db.insert(uri.getLastPathSegment(), DataColumns.TASK_NO, values);
         Uri newUri = ContentUris.withAppendedId(TaskMgr.TASK_URI, rowId);
         getContext().getContentResolver().notifyChange(newUri, null);
         return newUri;

@@ -49,15 +49,13 @@ public class TaskMenuActivity extends AppCompatActivity {
     private ImageButton imgBtn2;
     private ImageButton imgNote;
     private ImageButton imgDoc;
+    private AlertDialog.Builder adList;
     private AlertDialog.Builder adDelete;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    public final static String USER_NAME = "strUserName";
-    public final static String TASK_NO = "strTaskNo";
-    public final static String TASK_DESC = "strTaskDesc";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +76,13 @@ public class TaskMenuActivity extends AppCompatActivity {
 
         /* iCube title bar*/
         TextView txtUser = (TextView) findViewById(R.id.toolbar_user);
-        strUser = bundle.getString(MainActivity.USER_NAME);
+        strUser = bundle.getString(DataColumns.USER_NAME);
         txtUser.setText(strUser);
 
         /* Category and type */
         TextView txtCategType = (TextView) findViewById(R.id.content_value);
-        String categ_name = bundle.getString(MainActivity.CATEG_NAME);
-        String type_name = bundle.getString(MainActivity.TYPE_NAME);
+        String categ_name = bundle.getString(DataColumns.TASK_CATEGORY);
+        String type_name = bundle.getString(DataColumns.TASK_TYPE);
         txtCategType.setText(categ_name + " / " + type_name);
 
         /* Task list contents */
@@ -102,8 +100,31 @@ public class TaskMenuActivity extends AppCompatActivity {
         taskList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                adDelete.show();
+                select(position);
+                adList.setTitle(lstTasks.get(index).getDesc());
+                adList.show();
                 return false;
+            }
+        });
+
+        final String[] listItem = {"Add an action", "Delete"};
+        adList = new AlertDialog.Builder(this);
+        adList.setItems(listItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(DataColumns.TASK_NO, lstTasks.get(index).getNo());
+
+                        Intent intent = new Intent(context, EditActionActivity.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        adDelete.show();
+                        break;
+                }
             }
         });
 
@@ -170,6 +191,10 @@ public class TaskMenuActivity extends AppCompatActivity {
         adTask.notifyDataSetChanged();
         if (lstTasks.size() == 0)
             this.finish();
+        else if (position < lstTasks.size())
+            select(position);
+        else
+            select(position - 1);
     }
 
     private void hideKeyboard(Activity activity) {
@@ -183,9 +208,9 @@ public class TaskMenuActivity extends AppCompatActivity {
             return;
         }
         Bundle bundle = new Bundle();
-        bundle.putString(USER_NAME, strUser);
-        bundle.putInt(TASK_NO, lstTasks.get(position).getNo());
-        bundle.putString(TASK_DESC, lstTasks.get(position).getDesc());
+        bundle.putString(DataColumns.USER_NAME, strUser);
+        bundle.putInt(DataColumns.TASK_NO, lstTasks.get(position).getNo());
+        bundle.putString(DataColumns.TASK_DESCRIPTION, lstTasks.get(position).getDesc());
 
         Intent intent = new Intent(context, TaskActivity.class);
         intent.putExtras(bundle);

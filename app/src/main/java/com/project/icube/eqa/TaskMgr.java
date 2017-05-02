@@ -23,58 +23,10 @@ public class TaskMgr {
         private ContentResolver mResolver;
     private static TaskMgr instance = null;
     private static int task_no_count = 0;
-    public static final String AUTHORITY = "com.project.icube.eqa";
-    public static final Uri TASK_URI = Uri.parse("content://" + AUTHORITY + "/" + TaskEntry.TASK_TABLE_NAME);
-    public static final Uri ACTION_URI = Uri.parse("content://" + AUTHORITY + "/" + ActionEntry.ACTION_TABLE_NAME);
+    private static int action_no_count = 0;
 
-    public static abstract class TaskEntry implements BaseColumns {
-        public static final String TASK_TABLE_NAME = "taskhd";
-        public static final String TASK_NO = "tkno";
-        public static final String TASK_DESCRIPTION = "tkdesc";
-        public static final String TASK_CATEGORY = "category";
-        public static final String TASK_TYPE = "type";
-        public static final String TASK_STATUS = "status";
-        public static final String TASK_OBJECT = "object";
-        public static final String TASK_ERP = "erp";
-        public static final String TASK_PRIORITY = "priority";
-        public static final String TASK_NUM_DOC = "numdoc";
-        public static final String TASK_NUM_ACT = "numact";
-        public static final String TASK_ETD = "etd";
-        public static final String TASK_DAY_LEFT = "dleft";
-        public static final String TASK_DAY_END = "dend";
-        public static final String TASK_ALERT = "alert";
-        public static final String TASK_NOTE = "tknote";
-        public static final String TASK_ISSUE = "tkissue";
-        public static final String TASK_DADDED = "dadded";
-        public static final String TASK_UADDED = "uadded";
-        public static final String TASK_DEDITED = "dedited";
-        public static final String TASK_UEDITED = "uadited";
-        public static final String TASK_ALERT_DAYS = "alertdays";
-    }
-
-    public static abstract class ActionEntry implements BaseColumns {
-        public static final String ACTION_TABLE_NAME = "taskaction";
-        public static final String ACTION_NO = "actno";
-        public static final String ACTION_DESC = "actdesc";
-        public static final String ACTION_OWNER = "actowner";
-        public static final String ACTION_STATUS = "actstatus";
-        public static final String ACTION_ETD = "actetd";
-        public static final String ACTION_DAY_LATE = "actdlate";
-        public static final String ACTION_ATD = "actatd";
-        public static final String ACTION_DAY_WORK = "actdwork";
-        public static final String ACTION_NOTE = "actnote";
-        public static final String ACTION_ISSUE = "actissue";
-        public static final String ACTION_DADDED = "actdadded";
-        public static final String ACTION_UADDED = "actuadded";
-        public static final String ACTION_DEDITED = "actdedited";
-        public static final String ACTION_UEDITED = "actuedited";
-        public static final String ACTION_CATEGORY_ID = "actcategid";
-        public static final String ACTION_TYPE_ID = "acttypeid";
-
-        public static final String STATUS_CREATE = "st_create";
-        public static final String STATUS_WORKING = "st_working";
-        public static final String STATUS_END = "st_end";
-    }
+    public static final Uri TASK_URI = Uri.parse("content://" + DataColumns.AUTHORITY + "/" + DataColumns.TASK_TABLE_NAME);
+    public static final Uri ACTION_URI = Uri.parse("content://" + DataColumns.AUTHORITY + "/" + DataColumns.ACTION_TABLE_NAME);
 
     public static final String STATUS_START = "0";
     public static final String STATUS_URGENT = "1";
@@ -92,64 +44,62 @@ public class TaskMgr {
 
     public Task insertTask(Task newTask) {
         ContentValues cv = new ContentValues();
-        cv.put(TaskEntry.TASK_NO, newTask.getNo());
-        cv.put(TaskEntry.TASK_DESCRIPTION, newTask.getDesc());
-        cv.put(TaskEntry.TASK_CATEGORY, newTask.getCateg());
-        cv.put(TaskEntry.TASK_TYPE, newTask.getType());
-        cv.put(TaskEntry.TASK_STATUS, newTask.getStatus());
-        cv.put(TaskEntry.TASK_OBJECT, newTask.getObject());
-        cv.put(TaskEntry.TASK_ERP, newTask.getErp());
-        cv.put(TaskEntry.TASK_PRIORITY, newTask.getPriority());
-        cv.put(TaskEntry.TASK_NUM_DOC, newTask.getNumdoc());
-        cv.put(TaskEntry.TASK_NUM_ACT, newTask.getNumact());
-        cv.put(TaskEntry.TASK_ETD, newTask.getEtd());
-        cv.put(TaskEntry.TASK_DAY_LEFT, newTask.getDleft());
-        cv.put(TaskEntry.TASK_DAY_END, newTask.getDend());
-        cv.put(TaskEntry.TASK_ALERT, newTask.getAlert());
-        cv.put(TaskEntry.TASK_NOTE, newTask.getTknote());
-        cv.put(TaskEntry.TASK_ISSUE, newTask.getTkissue());
-        cv.put(TaskEntry.TASK_DADDED, newTask.getDadded());
-        cv.put(TaskEntry.TASK_UADDED, newTask.getUadded());
-        cv.put(TaskEntry.TASK_DEDITED, newTask.getDedited());
-        cv.put(TaskEntry.TASK_UEDITED, newTask.getUedited());
-        cv.put(TaskEntry.TASK_ALERT_DAYS, newTask.getAlertdays());
+        cv.put(DataColumns.TASK_NO, newTask.getNo());
+        cv.put(DataColumns.TASK_DESCRIPTION, newTask.getDesc());
+        cv.put(DataColumns.TASK_CATEGORY, newTask.getCateg());
+        cv.put(DataColumns.TASK_TYPE, newTask.getType());
+        cv.put(DataColumns.TASK_STATUS, newTask.getStatus());
+        cv.put(DataColumns.TASK_OBJECT, newTask.getObject());
+        cv.put(DataColumns.TASK_ERP, newTask.getErp());
+        cv.put(DataColumns.TASK_PRIORITY, newTask.getPriority());
+        cv.put(DataColumns.TASK_NUM_DOC, newTask.getNumdoc());
+        cv.put(DataColumns.TASK_NUM_ACT, newTask.getNumact());
+        cv.put(DataColumns.TASK_ETD, newTask.getEtd());
+        cv.put(DataColumns.TASK_DAY_LEFT, newTask.getDleft());
+        cv.put(DataColumns.TASK_DAY_END, newTask.getDend());
+        cv.put(DataColumns.TASK_ALERT, newTask.getAlert());
+        cv.put(DataColumns.TASK_NOTE, newTask.getTknote());
+        cv.put(DataColumns.TASK_ISSUE, newTask.getTkissue());
+        cv.put(DataColumns.TASK_DADDED, newTask.getDadded());
+        cv.put(DataColumns.TASK_UADDED, newTask.getUadded());
+        cv.put(DataColumns.TASK_DEDITED, newTask.getDedited());
+        cv.put(DataColumns.TASK_UEDITED, newTask.getUedited());
+        cv.put(DataColumns.TASK_ALERT_DAYS, newTask.getAlertdays());
 
-        //long id = db.InsertDB(TaskEntry.TASK_TABLE_NAME, null, cv);
         mResolver.insert(TASK_URI, cv);
-        //newTask.setId(id);
         return newTask;
     }
 
     public void deleteTask(int iTaskNo) {
-        String where = TaskEntry.TASK_NO + "=" + iTaskNo;
+        String where = DataColumns.TASK_NO + "=" + iTaskNo;
         mResolver.delete(ACTION_URI, where, null);
         mResolver.delete(TASK_URI, where, null);
     }
 
     public void deleteAction(int iActionNo) {
-        String where = ActionEntry.ACTION_NO + "=" + iActionNo;
+        String where = DataColumns.ACTION_NO + "=" + iActionNo;
         mResolver.delete(ACTION_URI, where, null);
     }
 
     public Action insertAction(Action newAction) {
         ContentValues cv = new ContentValues();
-        cv.put(TaskEntry.TASK_NO, newAction.getTaskNo());
-        cv.put(ActionEntry.ACTION_NO, newAction.getNo());
-        cv.put(ActionEntry.ACTION_DESC, newAction.getDesc());
-        cv.put(ActionEntry.ACTION_OWNER, newAction.getOwner());
-        cv.put(ActionEntry.ACTION_STATUS, newAction.getStatus());
-        cv.put(ActionEntry.ACTION_ETD, newAction.getEtd());
-        cv.put(ActionEntry.ACTION_DAY_LATE, newAction.getDlate());
-        cv.put(ActionEntry.ACTION_ATD, newAction.getAtd());
-        cv.put(ActionEntry.ACTION_DAY_WORK, newAction.getDwork());
-        cv.put(ActionEntry.ACTION_NOTE, newAction.getNote());
-        cv.put(ActionEntry.ACTION_ISSUE, newAction.getIssue());
-        cv.put(ActionEntry.ACTION_DADDED, newAction.getDadded());
-        cv.put(ActionEntry.ACTION_UADDED, newAction.getUadded());
-        cv.put(ActionEntry.ACTION_DEDITED, newAction.getDedited());
-        cv.put(ActionEntry.ACTION_UEDITED, newAction.getUedited());
-        cv.put(ActionEntry.ACTION_CATEGORY_ID, newAction.getCategory_id());
-        cv.put(ActionEntry.ACTION_TYPE_ID, newAction.getType_id());
+        cv.put(DataColumns.TASK_NO, newAction.getTaskNo());
+        cv.put(DataColumns.ACTION_NO, newAction.getNo());
+        cv.put(DataColumns.ACTION_DESC, newAction.getDesc());
+        cv.put(DataColumns.ACTION_OWNER, newAction.getOwner());
+        cv.put(DataColumns.ACTION_STATUS, newAction.getStatus());
+        cv.put(DataColumns.ACTION_ETD, newAction.getEtd());
+        cv.put(DataColumns.ACTION_DAY_LATE, newAction.getDlate());
+        cv.put(DataColumns.ACTION_ATD, newAction.getAtd());
+        cv.put(DataColumns.ACTION_DAY_WORK, newAction.getDwork());
+        cv.put(DataColumns.ACTION_NOTE, newAction.getNote());
+        cv.put(DataColumns.ACTION_ISSUE, newAction.getIssue());
+        cv.put(DataColumns.ACTION_DADDED, newAction.getDadded());
+        cv.put(DataColumns.ACTION_UADDED, newAction.getUadded());
+        cv.put(DataColumns.ACTION_DEDITED, newAction.getDedited());
+        cv.put(DataColumns.ACTION_UEDITED, newAction.getUedited());
+        cv.put(DataColumns.ACTION_CATEGORY_ID, newAction.getCategory_id());
+        cv.put(DataColumns.ACTION_TYPE_ID, newAction.getType_id());
 
         //long id = db.InsertDB(ActionEntry.ACTION_TABLE_NAME, null, cv);
         mResolver.insert(ACTION_URI, cv);
@@ -181,7 +131,7 @@ public class TaskMgr {
     }
 
     public Task getTask(int no) {
-        String where = TaskEntry.TASK_NO + "=" + no;
+        String where = DataColumns.TASK_NO + "=" + no;
         //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
         Cursor cursor = mResolver.query(TASK_URI, null, where, null, null);
         Task result = null;
@@ -197,7 +147,7 @@ public class TaskMgr {
 
     public List<Task> getTasks(String categName, String typeName) {
         List<Task> result = new ArrayList<Task>();
-        String where = TaskEntry.TASK_CATEGORY + " = '" + categName + "' AND " + TaskEntry.TASK_TYPE + " = '" + typeName + "'";
+        String where = DataColumns.TASK_CATEGORY + " = '" + categName + "' AND " + DataColumns.TASK_TYPE + " = '" + typeName + "'";
         //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
         Cursor cursor = mResolver.query(TASK_URI, null, where, null, null);
         cursor.moveToFirst();
@@ -215,12 +165,14 @@ public class TaskMgr {
 
     public List<Action> getActions(int taskNo) {
         List<Action> result = new ArrayList<Action>();
-        String where = TaskEntry.TASK_NO + " = '" + taskNo + "'";
+        String where = DataColumns.TASK_NO + " = '" + taskNo + "'";
         //Cursor cursor = db.QueryDB(ActionEntry.ACTION_TABLE_NAME, null, where, null, null, null, null);
         Cursor cursor = mResolver.query(ACTION_URI, null, where, null, null);
         cursor.moveToFirst();
         int rows = cursor.getCount();
         for (int i = 0; i < rows; i++) {
+            String strActionNo = cursor.getString(1);
+            action_no_count = Math.max(Integer.parseInt(strActionNo), action_no_count);
             result.add(new Action(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
                     cursor.getString(5), cursor.getInt(6), cursor.getString(7), cursor.getInt(8), cursor.getString(9), cursor.getString(10),
                     cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
@@ -233,7 +185,7 @@ public class TaskMgr {
 
     public List<String> getTaskDescs(String categName, String typeName) {
         List<String> result = new ArrayList<String>();
-        String where = TaskEntry.TASK_CATEGORY + " = '" + categName + "' AND " + TaskEntry.TASK_TYPE + " = '" + typeName + "'";
+        String where = DataColumns.TASK_CATEGORY + " = '" + categName + "' AND " + DataColumns.TASK_TYPE + " = '" + typeName + "'";
         //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, null, where, null, null, null, null);
         Cursor cursor = mResolver.query(TASK_URI, null, where, null, null);
         cursor.moveToFirst();
@@ -248,7 +200,7 @@ public class TaskMgr {
 
     public List<String> getActionDescs(int TaskNo) {
         List<String> result = new ArrayList<String>();
-        String where = TaskEntry.TASK_NO + " = '" + TaskNo + "'";
+        String where = DataColumns.TASK_NO + " = '" + TaskNo + "'";
         //Cursor cursor = db.QueryDB(ActionEntry.ACTION_TABLE_NAME, null, where, null, null, null, null);
         Cursor cursor = mResolver.query(ACTION_URI, null, where, null, null);
         cursor.moveToFirst();
@@ -266,10 +218,10 @@ public class TaskMgr {
         List<Categ> result = new ArrayList<Categ>();
 
         String[] cols = new String[4];
-        cols[0] = TaskEntry.TASK_CATEGORY;
-        cols[1] = TaskEntry.TASK_TYPE;
-        cols[2] = TaskEntry.TASK_NO;
-        cols[3] = TaskEntry.TASK_DESCRIPTION;
+        cols[0] = DataColumns.TASK_CATEGORY;
+        cols[1] = DataColumns.TASK_TYPE;
+        cols[2] = DataColumns.TASK_NO;
+        cols[3] = DataColumns.TASK_DESCRIPTION;
 
         //Cursor cursor = db.QueryDB(TaskEntry.TASK_TABLE_NAME, cols, null, null, null, null, null);
         Cursor cursor = mResolver.query(TASK_URI, cols, null, null, null);
@@ -298,9 +250,9 @@ public class TaskMgr {
 
     public void UpdateActionStatus(Action action, String status) {
         ContentValues value = new ContentValues();
-        value.put(ActionEntry.ACTION_STATUS, status);
+        value.put(DataColumns.ACTION_STATUS, status);
 
-        String selection = ActionEntry.ACTION_NO + "=" + String.valueOf(action.no);
+        String selection = DataColumns.ACTION_NO + "=" + String.valueOf(action.no);
 
         //db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
         mResolver.update(ACTION_URI, value, selection, null);
@@ -401,10 +353,12 @@ public class TaskMgr {
         private String dedited;
         private String uedited;
         private int alertdays;
+        private int action_no_count;
 
         public Task(int no, String desc) {
             this.no = no;
             this.desc = desc;
+            this.action_no_count = 0;
         }
 
         //add new task
@@ -432,6 +386,7 @@ public class TaskMgr {
             this.dedited = dedited;
             this.uedited = uedited;
             this.alertdays = 2;
+            this.action_no_count = 0;
         }
 
         public Task(int no, String desc, String categ, String type, String status,
@@ -460,6 +415,11 @@ public class TaskMgr {
             this.dedited = dedited;
             this.uedited = uedited;
             this.alertdays = alertdays;
+            this.action_no_count = 0;
+        }
+
+        public int addAction() {
+            return ++this.action_no_count;
         }
 
         /*public void setId(long id) {
@@ -551,7 +511,7 @@ public class TaskMgr {
         }
     }
 
-    public class Action {
+    public static class Action {
         private long id;
         private int task_no;
         private int no;
@@ -572,9 +532,33 @@ public class TaskMgr {
         private String type_id;
 
         public Action(int task_no, int act_no, String act_desc) {
+
             this.task_no = task_no;
             this.no = act_no;
             this.desc = act_desc;
+        }
+
+        /* add new action */
+        public Action(int task_no, String act_desc, String owner, String etd, int dwork,
+                      String dadded, String uadded, String dedited, String uedited, String category_id, String type_id) {
+            this.task_no = task_no;
+            this.no = action_no_count + 1;
+            action_no_count++;
+            this.desc = act_desc;
+            this.owner = owner;
+            this.status = STATUS_START;
+            this.etd = etd;
+            this.dlate = 0;
+            this.atd = "";
+            this.dwork = dwork;
+            this.note = "";
+            this.issue = "no issue";
+            this.dadded = dadded;
+            this.uadded = uadded;
+            this.dedited = dedited;
+            this.uedited = uedited;
+            this.category_id = category_id;
+            this.type_id = type_id;
         }
 
         public Action(int task_no, int act_no, String act_desc, String owner, String status, String etd, int dlate,
@@ -585,10 +569,10 @@ public class TaskMgr {
             this.desc = act_desc;
             this.owner = owner;
             this.status = status;
-            this.etd = etd;
-            this.dlate = dlate;
+            this.etd = etd; // estimate date
+            this.dlate = dlate; // date late
             this.atd = atd;
-            this.dwork = dwork;
+            this.dwork = dwork; // date from start
             this.note = note;
             this.issue = issue;
             this.dadded = dadded;
