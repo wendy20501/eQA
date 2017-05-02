@@ -2,10 +2,12 @@ package com.project.icube.eqa;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,22 +40,22 @@ public class TaskMenuActivity extends AppCompatActivity {
     private List<String> lstTaskDescs;
     private List<TaskMgr.Task> lstTasks;
     private ListView taskList;
+    private ArrayAdapter<TaskMgr.Task> adTask;
     private String strUser;
     private TextView txtDescValue;
     private AutoCompleteTextView txtSearch;
     private int index;
-    private ImageButton imgGo;
+    private ImageButton imgBtn1;
     private ImageButton imgBtn2;
     private ImageButton imgNote;
     private ImageButton imgDoc;
+    private AlertDialog.Builder adList;
+    private AlertDialog.Builder adDelete;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    public final static String USER_NAME = "strUserName";
-    public final static String TASK_NO = "strTaskNo";
-    public final static String TASK_DESC = "strTaskDesc";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,25 +76,71 @@ public class TaskMenuActivity extends AppCompatActivity {
 
         /* iCube title bar*/
         TextView txtUser = (TextView) findViewById(R.id.toolbar_user);
-        strUser = bundle.getString(MainActivity.USER_NAME);
+        strUser = bundle.getString(DataColumns.USER_NAME);
         txtUser.setText(strUser);
 
         /* Category and type */
         TextView txtCategType = (TextView) findViewById(R.id.content_value);
-        String categ_name = bundle.getString(MainActivity.CATEG_NAME);
-        String type_name = bundle.getString(MainActivity.TYPE_NAME);
+        String categ_name = bundle.getString(DataColumns.TASK_CATEGORY);
+        String type_name = bundle.getString(DataColumns.TASK_TYPE);
         txtCategType.setText(categ_name + " / " + type_name);
 
         /* Task list contents */
         lstTasks = taskMgr.getTasks(categ_name, type_name);
-        ArrayAdapter<TaskMgr.Task> adapter = new TaskAdapter(context, R.id.taskList, R.layout.task_item, lstTasks);
+        adTask = new TaskAdapter(context, R.id.taskList, R.layout.task_item, lstTasks);
 
         taskList = (ListView) findViewById(R.id.taskList);
-        taskList.setAdapter(adapter);
+        taskList.setAdapter(adTask);
         taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 select(position);
+            }
+        });
+        taskList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                select(position);
+                adList.setTitle(lstTasks.get(index).getDesc());
+                adList.show();
+                return false;
+            }
+        });
+
+        final String[] listItem = {"Add an action", "Delete"};
+        adList = new AlertDialog.Builder(this);
+        adList.setItems(listItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(DataColumns.TASK_NO, lstTasks.get(index).getNo());
+
+                        Intent intent = new Intent(context, EditActionActivity.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        adDelete.show();
+                        break;
+                }
+            }
+        });
+
+        adDelete = new AlertDialog.Builder(this);
+        adDelete.setTitle("Delete task");
+        adDelete.setMessage("1 task and all the related actions will be deleted.");
+        adDelete.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+        adDelete.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                delete(index);
             }
         });
 
@@ -137,6 +185,18 @@ public class TaskMenuActivity extends AppCompatActivity {
         txtDescValue.setText(lstTasks.get(index).getDesc());
     }
 
+    private void delete(int position) {
+        taskMgr.deleteTask(lstTasks.get(position).getNo());
+        lstTasks.remove(position);
+        adTask.notifyDataSetChanged();
+        if (lstTasks.size() == 0)
+            this.finish();
+        else if (position < lstTasks.size())
+            select(position);
+        else
+            select(position - 1);
+    }
+
     private void hideKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
@@ -148,9 +208,9 @@ public class TaskMenuActivity extends AppCompatActivity {
             return;
         }
         Bundle bundle = new Bundle();
-        bundle.putString(USER_NAME, strUser);
-        bundle.putInt(TASK_NO, lstTasks.get(position).getNo());
-        bundle.putString(TASK_DESC, lstTasks.get(position).getDesc());
+        bundle.putString(DataColumns.USER_NAME, strUser);
+        bundle.putInt(DataColumns.TASK_NO, lstTasks.get(position).getNo());
+        bundle.putString(DataColumns.TASK_DESCRIPTION, lstTasks.get(position).getDesc());
 
         Intent intent = new Intent(context, TaskActivity.class);
         intent.putExtras(bundle);

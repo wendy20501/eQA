@@ -52,16 +52,16 @@ public class TaskActivity extends AppCompatActivity {
 
         /* iCube title bar*/
         TextView txtUser = (TextView) findViewById(R.id.toolbar_user);
-        strUser = bundle.getString(MainActivity.USER_NAME);
+        strUser = bundle.getString(DataColumns.USER_NAME);
         txtUser.setText(strUser);
 
         /* task desc */
         TextView txtTaskDesc = (TextView) findViewById(R.id.task_desc_value);
-        String strTaskDesc = bundle.getString(TaskMenuActivity.TASK_DESC);
+        String strTaskDesc = bundle.getString(DataColumns.TASK_DESCRIPTION);
         txtTaskDesc.setText(strTaskDesc);
 
         /* Action list contents */
-        intTaskNo = bundle.getInt(TaskMenuActivity.TASK_NO);
+        intTaskNo = bundle.getInt(DataColumns.TASK_NO);
         lstActions = taskMgr.getActions(intTaskNo);
         ifEmpty = lstActions.isEmpty();
 
