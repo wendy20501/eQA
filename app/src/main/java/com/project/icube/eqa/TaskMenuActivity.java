@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,8 +50,8 @@ public class TaskMenuActivity extends AppCompatActivity {
     private ImageButton imgBtn2;
     private ImageButton imgNote;
     private ImageButton imgDoc;
-    private AlertDialog.Builder adList;
-    private AlertDialog.Builder adDelete;
+    private AlertDialog.Builder adList, adDelete, adNote;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -171,6 +172,33 @@ public class TaskMenuActivity extends AppCompatActivity {
 
         imgBtn2 = (ImageButton) findViewById(R.id.imgBtn2);
         imgNote = (ImageButton) findViewById(R.id.imgNote);
+        imgNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = LayoutInflater.from(TaskMenuActivity.this);
+                View vNote = inflater.inflate(R.layout.note_item, null);
+                final EditText edNote = (EditText) vNote.findViewById(R.id.ed_note);
+                edNote.setText(taskMgr.getTask(lstTasks.get(index).getNo()).getTknote());
+
+                adNote = new AlertDialog.Builder(TaskMenuActivity.this);
+                adNote.setTitle("Note");
+                adNote.setView(vNote);
+                adNote.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        taskMgr.UpdateTaskNote(lstTasks.get(index).getNo(), edNote.getText().toString());
+                    }
+                });
+                adNote.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                });
+
+                adNote.show();
+            }
+        });
         imgDoc = (ImageButton) findViewById(R.id.imgDoc);
     }
 

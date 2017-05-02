@@ -145,6 +145,20 @@ public class TaskMgr {
         return result;
     }
 
+    public Action getAction(int iTaskNo, int iActionNo) {
+        String where = DataColumns.TASK_NO + "=" + iTaskNo + " AND " + DataColumns.ACTION_NO + "=" + iActionNo;
+        Cursor cursor = mResolver.query(ACTION_URI, null, where, null, null);
+        Action result = null;
+        if (cursor.moveToFirst()) {
+            result = new Action(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
+                    cursor.getString(5), cursor.getInt(6), cursor.getString(7), cursor.getInt(8), cursor.getString(9), cursor.getString(10),
+                    cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                    cursor.getString(16));
+        }
+        cursor.close();
+        return result;
+    }
+
     public List<Task> getTasks(String categName, String typeName) {
         List<Task> result = new ArrayList<Task>();
         String where = DataColumns.TASK_CATEGORY + " = '" + categName + "' AND " + DataColumns.TASK_TYPE + " = '" + typeName + "'";
@@ -255,6 +269,24 @@ public class TaskMgr {
         String selection = DataColumns.ACTION_NO + "=" + String.valueOf(action.no);
 
         //db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
+        mResolver.update(ACTION_URI, value, selection, null);
+    }
+
+    public void UpdateTaskNote(int iTaskNo, String strNote) {
+        ContentValues value = new ContentValues();
+        value.put(DataColumns.TASK_NOTE, strNote);
+
+        String selection = DataColumns.TASK_NO + "=" + String.valueOf(iTaskNo);
+
+        mResolver.update(TASK_URI, value, selection, null);
+    }
+
+    public void UpdateActionNote(int iTaskNo, int iActionNo, String strNote) {
+        ContentValues value = new ContentValues();
+        value.put(DataColumns.ACTION_NOTE, strNote);
+
+        String selection = DataColumns.TASK_NO + "=" + String.valueOf(iTaskNo) + " AND " + DataColumns.ACTION_NO + "=" + iActionNo;
+
         mResolver.update(ACTION_URI, value, selection, null);
     }
 

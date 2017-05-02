@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +37,8 @@ public class TaskActivity extends AppCompatActivity {
     private int index;
     private TextView txtActionDesc;
     private Button btnDone;
-    private AlertDialog.Builder adList, adDelete;
+    private ImageView imgNote;
+    private AlertDialog.Builder adList, adDelete, adNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +152,35 @@ public class TaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateStatus();
+            }
+        });
+
+        imgNote = (ImageView) findViewById(R.id.imgNote);
+        imgNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = LayoutInflater.from(TaskActivity.this);
+                View vNote = inflater.inflate(R.layout.note_item, null);
+                final EditText edNote = (EditText) vNote.findViewById(R.id.ed_note);
+                edNote.setText(taskMgr.getAction(intTaskNo, lstActions.get(index).getNo()).getNote());
+
+                adNote = new AlertDialog.Builder(TaskActivity.this);
+                adNote.setTitle("Note");
+                adNote.setView(vNote);
+                adNote.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        taskMgr.UpdateActionNote(intTaskNo, lstActions.get(index).getNo(), edNote.getText().toString());
+                    }
+                });
+                adNote.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                });
+
+                adNote.show();
             }
         });
     }
