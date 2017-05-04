@@ -28,10 +28,6 @@ public class TaskMgr {
     public static final Uri TASK_URI = Uri.parse("content://" + DataColumns.AUTHORITY + "/" + DataColumns.TASK_TABLE_NAME);
     public static final Uri ACTION_URI = Uri.parse("content://" + DataColumns.AUTHORITY + "/" + DataColumns.ACTION_TABLE_NAME);
 
-    public static final String STATUS_START = "0";
-    public static final String STATUS_URGENT = "1";
-    public static final String STATUS_DONE = "2";
-
     public TaskMgr(Context context) {
         mResolver = context.getContentResolver();
     }
@@ -115,19 +111,6 @@ public class TaskMgr {
     public void deleteAllActions() {
         //db.DeleteDB(ActionEntry.ACTION_TABLE_NAME, null, null);
         mResolver.delete(ACTION_URI, null, null);
-    }
-
-    public int getStatusColor(String no) {
-        switch (no) {
-            case STATUS_START:
-                return R.color.task_start;
-            case STATUS_URGENT:
-                return R.color.task_urgent;
-            case STATUS_DONE:
-                return R.color.task_done;
-            default:
-                return R.color.task_start;
-        }
     }
 
     public Task getTask(int no) {
@@ -262,6 +245,16 @@ public class TaskMgr {
         return result;
     }
 
+    public void UpdateTaskStatus(int iTaskNo, String status) {
+        ContentValues value = new ContentValues();
+        value.put(DataColumns.ACTION_STATUS, status);
+
+        String selection = DataColumns.ACTION_NO + "=" + String.valueOf(iTaskNo);
+
+        //db.UpdateDB(ActionEntry.ACTION_TABLE_NAME, value, selection, null);
+        mResolver.update(ACTION_URI, value, selection, null);
+    }
+
     public void UpdateActionStatus(Action action, String status) {
         ContentValues value = new ContentValues();
         value.put(DataColumns.ACTION_STATUS, status);
@@ -288,6 +281,16 @@ public class TaskMgr {
         String selection = DataColumns.TASK_NO + "=" + String.valueOf(iTaskNo) + " AND " + DataColumns.ACTION_NO + "=" + iActionNo;
 
         mResolver.update(ACTION_URI, value, selection, null);
+    }
+
+    public void UpdateActionCount(int iTaskNo) {
+        Task task = getTask(iTaskNo);
+        ContentValues value = new ContentValues();
+        value.put(DataColumns.TASK_NUM_ACT, task.getNumact() + 1);
+
+        String selection = DataColumns.TASK_NO + "=" + String.valueOf(iTaskNo);
+
+        mResolver.update(TASK_URI, value, selection, null);
     }
 
     public void sample() {
@@ -401,7 +404,7 @@ public class TaskMgr {
             this.desc = desc;
             this.categ = categ;
             this.type = type;
-            this.status = STATUS_START;
+            this.status = DataColumns.STATUS_CREATE;
             this.object = "obj";
             this.erp = "erp";
             this.priority = "1";
@@ -450,9 +453,6 @@ public class TaskMgr {
             this.action_no_count = 0;
         }
 
-        public int addAction() {
-            return ++this.action_no_count;
-        }
 
         /*public void setId(long id) {
             this.id = id;
@@ -541,6 +541,10 @@ public class TaskMgr {
         public int getAlertdays() {
             return alertdays;
         }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 
     public static class Action {
@@ -578,7 +582,7 @@ public class TaskMgr {
             action_no_count++;
             this.desc = act_desc;
             this.owner = owner;
-            this.status = STATUS_START;
+            this.status = DataColumns.STATUS_CREATE;
             this.etd = etd;
             this.dlate = 0;
             this.atd = "";

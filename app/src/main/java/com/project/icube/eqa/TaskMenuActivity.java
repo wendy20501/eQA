@@ -33,6 +33,11 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class TaskMenuActivity extends AppCompatActivity {
@@ -207,6 +212,12 @@ public class TaskMenuActivity extends AppCompatActivity {
         select(index);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adTask.notifyDataSetChanged();
+    }
+
     private void select(int position) {
         index = position;
         taskList.setItemChecked(index, true);
@@ -289,10 +300,14 @@ public class TaskMenuActivity extends AppCompatActivity {
 
     private class TaskAdapter extends ArrayAdapter<TaskMgr.Task> {
         private List<TaskMgr.Task> lstTasks;
+        private SimpleDateFormat MyDateFormat;
+        private Calendar today;
 
         public TaskAdapter(Context context, int resource, int textViewResourceId, List<TaskMgr.Task> objects) {
             super(context, resource, textViewResourceId, objects);
             this.lstTasks = objects;
+            this.today = Calendar.getInstance();
+            this.MyDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         }
 
         @Override
@@ -300,13 +315,33 @@ public class TaskMenuActivity extends AppCompatActivity {
             TaskMgr.Task current = lstTasks.get(position);
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.task_item, null);
+
             TextView taskDesc = (TextView) view.findViewById(R.id.task_desc);
             taskDesc.setText(current.getDesc());
+
             TextView taskEtd = (TextView) view.findViewById(R.id.task_etd);
             taskEtd.setText(current.getEtd());
+
+            ImageView taskStatus = (ImageView) view.findViewById(R.id.task_status);
+            Date Endtime = null;
+            try {
+                Endtime = MyDateFormat.parse(current.getEtd());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (current.getStatus().equals(DataColumns.STATUS_CREATE) && IfUrgent(Endtime)) {
+                taskMgr.UpdateTaskStatus(current.getNo(), DataColumns.STATUS_URGENT);
+                current.setStatus(DataColumns.STATUS_URGENT);
+            }
+            taskStatus.setBackgroundColor(getResources().getColor(DataColumns.STATUS_COLOR[Integer.valueOf(current.getStatus())]));
+
             ImageView taskEnter = (ImageView) view.findViewById(R.id.task_enter);
-            if (taskMgr.getActions(lstTasks.get(position).getNo()).size() == 0) {
+            List<TaskMgr.Action> lstActions = taskMgr.getActions(lstTasks.get(position).getNo());
+            if (lstActions.size() == 0) {
                 taskEnter.setVisibility(View.INVISIBLE);
+            } else if (IfDone(lstActions)){
+                taskMgr.UpdateTaskStatus(current.getNo(), DataColumns.STATUS_END);
+                current.setStatus(DataColumns.STATUS_END);
             }
             taskEnter.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -314,7 +349,20 @@ public class TaskMenuActivity extends AppCompatActivity {
                     open(position);
                 }
             });
+
             return view;
+        }
+
+        public boolean IfUrgent(Date deadline) {
+            return deadline.getTime() - today.getTime().getTime() < DataColumns.URGENT_TIME ? true : false;
+        }
+
+        public boolean IfDone(List<TaskMgr.Action> lstActions) {
+            for (int i = 0; i < lstActions.size(); i++) {
+                if (!lstActions.get(i).getStatus().equals(DataColumns.STATUS_END))
+                    return false;
+            }
+            return true;
         }
     }
 }

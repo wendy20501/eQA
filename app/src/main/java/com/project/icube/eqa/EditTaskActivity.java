@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.project.icube.eqa.TaskMgr.STATUS_START;
-
 public class EditTaskActivity extends AppCompatActivity {
     private Context context;
     private TaskMgr taskMgr;

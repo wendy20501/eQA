@@ -38,7 +38,7 @@ public class EditActionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        int iTaskNo = bundle.getInt(DataColumns.TASK_NO);
+        final int iTaskNo = bundle.getInt(DataColumns.TASK_NO);
         curTask = taskMgr.getTask(iTaskNo);
 
         TextView txtTaskDesc = (TextView) findViewById(R.id.task_desc);
@@ -93,6 +93,7 @@ public class EditActionActivity extends AppCompatActivity {
                             getDatePeriod(today.getTime(), start.getTime()), strToday, strToday, strToday,
                             strToday, curTask.getCateg(), curTask.getType());
                     taskMgr.insertAction(newAction);
+                    taskMgr.UpdateActionCount(iTaskNo);
                     close();
                 }
             }

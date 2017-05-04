@@ -287,22 +287,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    private static int STATUS_CREAT = 0;
-    private static int STATUS_START = 1;
-    private class Task {
-        String category;
-        String type;
-        String description;
-        Date etd;
-        int status;
-
-        public Task(String catg, String type, String desc, Date etd) {
-            this.category = catg;
-            this.type = type;
-            this.description = desc;
-            this.etd = etd;
-            this.status = STATUS_CREAT;
-        }
-    }
 }

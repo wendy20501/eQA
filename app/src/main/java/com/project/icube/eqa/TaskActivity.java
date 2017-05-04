@@ -22,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TaskActivity extends AppCompatActivity {
@@ -187,8 +191,8 @@ public class TaskActivity extends AppCompatActivity {
 
     private void updateStatus() {
         TaskMgr.Action current = lstActions.get(index);
-        taskMgr.UpdateActionStatus(current, TaskMgr.STATUS_DONE);
-        current.setStatus(TaskMgr.STATUS_DONE);
+        taskMgr.UpdateActionStatus(current, DataColumns.STATUS_END);
+        current.setStatus(DataColumns.STATUS_END);
         adpAction.notifyDataSetChanged();
     }
 
@@ -225,10 +229,14 @@ public class TaskActivity extends AppCompatActivity {
 
     private class ActionAdapter extends ArrayAdapter<TaskMgr.Action> {
         List<TaskMgr.Action> lstActions;
+        private SimpleDateFormat MyDateFormat;
+        private Calendar today;
 
         public ActionAdapter(Context context, int resource, List<TaskMgr.Action> objects) {
             super(context, resource, objects);
             this.lstActions = objects;
+            this.today = Calendar.getInstance();
+            this.MyDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         }
 
         @Override
@@ -239,7 +247,17 @@ public class TaskActivity extends AppCompatActivity {
             View view = inflater.inflate(R.layout.action_item, null);
 
             ImageView imgStatus = (ImageView) view.findViewById(R.id.action_status);
-            imgStatus.setBackgroundColor(getResources().getColor(taskMgr.getStatusColor(current.getStatus())));
+            Date Endtime = null;
+            try {
+                Endtime = MyDateFormat.parse(current.getEtd());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (current.getStatus().equals(DataColumns.STATUS_CREATE) && IfUrgent(Endtime)) {
+                taskMgr.UpdateActionStatus(current, DataColumns.STATUS_URGENT);
+                current.setStatus(DataColumns.STATUS_URGENT);
+            }
+            imgStatus.setBackgroundColor(getResources().getColor(DataColumns.STATUS_COLOR[Integer.valueOf(current.getStatus())]));
 
             TextView txtDesc = (TextView) view.findViewById(R.id.action_desc);
             txtDesc.setText(current.getDesc());
@@ -251,6 +269,10 @@ public class TaskActivity extends AppCompatActivity {
             txtTime.setText(current.getEtd());
 
             return view;
+        }
+
+        public boolean IfUrgent(Date deadline) {
+            return deadline.getTime() - today.getTime().getTime() < DataColumns.URGENT_TIME ? true : false;
         }
     }
 }
