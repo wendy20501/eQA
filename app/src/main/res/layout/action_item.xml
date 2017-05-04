@@ -46,7 +46,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:padding="3dp" />
+                android:padding="3dp"
+                android:maxLines="1" />
 
             <TextView
                 android:id="@+id/action_time"

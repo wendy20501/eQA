@@ -38,7 +38,7 @@ public class EditActionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        int iTaskNo = bundle.getInt(DataColumns.TASK_NO);
+        final int iTaskNo = bundle.getInt(DataColumns.TASK_NO);
         curTask = taskMgr.getTask(iTaskNo);
 
         TextView txtTaskDesc = (TextView) findViewById(R.id.task_desc);
@@ -60,11 +60,11 @@ public class EditActionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int iStartYear = dateStartPicker.getYear();
-                int iStartMonth = dateStartPicker.getMonth();
+                int iStartMonth = dateStartPicker.getMonth() + 1;
                 int iStartDay = dateStartPicker.getDayOfMonth();
 
                 int iEndYear = dateEndPicker.getYear();
-                int iEndMonth = dateEndPicker.getMonth();
+                int iEndMonth = dateEndPicker.getMonth() + 1;
                 int iEndDay = dateEndPicker.getDayOfMonth();
 
                 String strStart = getDate(iStartYear, iStartMonth, iStartDay);
@@ -93,6 +93,7 @@ public class EditActionActivity extends AppCompatActivity {
                             getDatePeriod(today.getTime(), start.getTime()), strToday, strToday, strToday,
                             strToday, curTask.getCateg(), curTask.getType());
                     taskMgr.insertAction(newAction);
+                    taskMgr.UpdateActionCount(iTaskNo);
                     close();
                 }
             }

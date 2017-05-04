@@ -48,11 +48,15 @@ public abstract class DataColumns implements BaseColumns {
     public static final String ACTION_CATEGORY_ID = "actcategid";
     public static final String ACTION_TYPE_ID = "acttypeid";
 
-    public static final String STATUS_CREATE = "st_create";
-    public static final String STATUS_WORKING = "st_working";
-    public static final String STATUS_END = "st_end";
+    public static final String STATUS_CREATE = "0";
+    public static final String STATUS_URGENT = "1";
+    public static final String STATUS_END = "2";
 
     public static final String AUTHORITY = "com.project.icube.eqa";
 
     public static final String USER_NAME = "usrname";
+
+    public static final int URGENT_TIME = 60 * 60 * 24 * 1000;
+
+    public static final int[] STATUS_COLOR = {R.color.task_start, R.color.task_urgent, R.color.task_done};
 }

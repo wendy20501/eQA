@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.project.icube.eqa.TaskMgr.STATUS_START;
-
 public class EditTaskActivity extends AppCompatActivity {
     private Context context;
     private TaskMgr taskMgr;
@@ -159,11 +157,11 @@ public class EditTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int iStartYear = dateStartPicker.getYear();
-                int iStartMonth = dateStartPicker.getMonth();
+                int iStartMonth = dateStartPicker.getMonth() + 1;
                 int iStartDay = dateStartPicker.getDayOfMonth();
 
                 int iEndYear = dateEndPicker.getYear();
-                int iEndMonth = dateEndPicker.getMonth();
+                int iEndMonth = dateEndPicker.getMonth() + 1;
                 int iEndDay = dateEndPicker.getDayOfMonth();
 
                 String strStart = getDate(iStartYear, iStartMonth, iStartDay);
@@ -180,8 +178,8 @@ public class EditTaskActivity extends AppCompatActivity {
                 String strDesc = ed_Desc.getText().toString();
                 if (strDesc.matches("")) {
                     Toast.makeText(context, "Please enter task description!", Toast.LENGTH_SHORT).show();
-                } else if (start.getTime().getTime() > end.getTime().getTime() || today.getTime().getTime() > end.getTime().getTime()) {
-                    Toast.makeText(context, "Please enter reasonable end date!", Toast.LENGTH_SHORT).show();
+                } else if (start.getTime().after(end.getTime())) {
+                    Toast.makeText(context, "Please enter reasonable date!", Toast.LENGTH_SHORT).show();
                 } else {
                     TaskMgr.Task newTask = new TaskMgr.Task(strDesc, txtCateg.getText().toString(), txtType.getText().toString(),
                             strEnd, getDayLeft(start.getTime(), end.getTime()), strEnd, strStart, strStart,

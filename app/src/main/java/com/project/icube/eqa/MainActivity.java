@@ -3,13 +3,11 @@ package com.project.icube.eqa;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -288,23 +286,5 @@ public class MainActivity extends AppCompatActivity {
             return conn;
         }
 
-    }
-
-    private static int STATUS_CREAT = 0;
-    private static int STATUS_START = 1;
-    private class Task {
-        String category;
-        String type;
-        String description;
-        Date etd;
-        int status;
-
-        public Task(String catg, String type, String desc, Date etd) {
-            this.category = catg;
-            this.type = type;
-            this.description = desc;
-            this.etd = etd;
-            this.status = STATUS_CREAT;
-        }
     }
 }
