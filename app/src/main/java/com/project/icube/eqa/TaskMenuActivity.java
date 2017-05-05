@@ -329,11 +329,6 @@ public class TaskMenuActivity extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if (current.getStatus().equals(DataColumns.STATUS_CREATE) && IfUrgent(Endtime)) {
-                taskMgr.UpdateTaskStatus(current.getNo(), DataColumns.STATUS_URGENT);
-                current.setStatus(DataColumns.STATUS_URGENT);
-            }
-            taskStatus.setBackgroundColor(getResources().getColor(DataColumns.STATUS_COLOR[Integer.valueOf(current.getStatus())]));
 
             ImageView taskEnter = (ImageView) view.findViewById(R.id.task_enter);
             List<TaskMgr.Action> lstActions = taskMgr.getActions(lstTasks.get(position).getNo());
@@ -343,6 +338,11 @@ public class TaskMenuActivity extends AppCompatActivity {
                 taskMgr.UpdateTaskStatus(current.getNo(), DataColumns.STATUS_END);
                 current.setStatus(DataColumns.STATUS_END);
             }
+            if (!current.getStatus().equals(DataColumns.STATUS_END) && IfUrgent(Endtime)) {
+                taskMgr.UpdateTaskStatus(current.getNo(), DataColumns.STATUS_URGENT);
+                current.setStatus(DataColumns.STATUS_URGENT);
+            }
+            taskStatus.setBackgroundColor(getResources().getColor(DataColumns.STATUS_COLOR[Integer.valueOf(current.getStatus())]));
             taskEnter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
