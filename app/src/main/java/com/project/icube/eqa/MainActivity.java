@@ -8,6 +8,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTabHost;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.sql.Connection;
@@ -27,114 +32,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-    private Context context;
-    private TaskMgr taskMgr;
-    HashMap<String, List<String>> mapTypes;
-    List<String> lstCategs;
-    String strUserName;
-    /*
-    public static final String CATEG_NAME = "strTaskCategName";
-    public static final String TYPE_NAME = "strTaskTypeName";
-    public static final String USER_NAME = "strUserName";
-    */
-    private ExpandableListView categList;
-    private CategAdapter adapter;
-    private TaskContentObserver mTaskObserver;
-
+public class MainActivity extends FragmentActivity {
+    private String strUserName;
+    private LayoutInflater inflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, EditTaskActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        this.context = this;
-        taskMgr = TaskMgr.getInstance(this);
-        /*
-        if (taskMgr.GetTaskCount() == 0) {
-            taskMgr.init();
-        } else {
-            taskMgr.deleteAllTasks();
-            taskMgr.deleteAllActions();
-        }*/
-        //taskMgr.sample();
-
         initUI();
-        mTaskObserver = new TaskContentObserver(mHandler);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getContentResolver().registerContentObserver(TaskMgr.TASK_URI, true, mTaskObserver);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mTaskObserver != null) {
-            getContentResolver().unregisterContentObserver(mTaskObserver);
-            mTaskObserver = null;
-        }
-    }
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            updateCategData();
-            //adapter.notifyDataSetChanged();
-        }
-    };
-
-    private void updateCategData() {
-
-        lstCategs  = new ArrayList<String>();
-        mapTypes = new HashMap<String, List<String>>();
-        List<TaskMgr.Categ> categs = taskMgr.getCategories();
-        for (int i = 0; i < categs.size(); i++) {
-            TaskMgr.Categ current = categs.get(i);
-            mapTypes.put(current.getName(), current.getTypes());
-            lstCategs.add(current.getName());
-        }
-        adapter = new CategAdapter(this, lstCategs, mapTypes);
-        categList = (ExpandableListView) findViewById(R.id.category_lst);
-
-        categList.setAdapter(adapter);
-        categList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            int lastExpandedPosition = -1;
-
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                if (lastExpandedPosition != -1 && groupPosition != lastExpandedPosition) {
-                    categList.collapseGroup(lastExpandedPosition);
-                }
-                lastExpandedPosition = groupPosition;
-            }
-        });
-        categList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Bundle bundle = new Bundle();
-                bundle.putString(DataColumns.TASK_CATEGORY, lstCategs.get(groupPosition));
-                bundle.putString(DataColumns.TASK_TYPE, mapTypes.get(lstCategs.get(groupPosition)).get(childPosition));
-                bundle.putString(DataColumns.USER_NAME, strUserName);
-
-                Intent intent = new Intent(context, TaskMenuActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                return false;
-            }
-        });
     }
 
     private void initUI() {
@@ -142,7 +49,26 @@ public class MainActivity extends AppCompatActivity {
         TextView txtUser = (TextView) findViewById(R.id.toolbar_user);
         txtUser.setText(strUserName);
 
-        updateCategData();
+        inflater = LayoutInflater.from(this);
+        View vTab1 = inflater.inflate(R.layout.categ_tab, null);
+        ImageView imgTab1 = (ImageView) vTab1.findViewById(R.id.img);
+        imgTab1.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_calendar_24dp, null));
+
+        View vTab2 = inflater.inflate(R.layout.categ_tab, null);
+        ImageView imgTab2 = (ImageView) vTab2.findViewById(R.id.img);
+        imgTab2.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_list_24dp, null));
+
+        FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        mTabHost.setup(this, getSupportFragmentManager(), R.id.container);
+
+        mTabHost.addTab(mTabHost.newTabSpec("One")
+                        .setIndicator(vTab1)
+                , CalendarFragment.class, null);
+
+        mTabHost.addTab(mTabHost.newTabSpec("Two")
+                        .setIndicator(vTab2)
+                , CategFragment.class, null);
+
         /*
         ConnectionClass connection = new ConnectionClass();
         Connection conn = connection.CONN();
@@ -154,84 +80,7 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
-    public static class CategAdapter extends BaseExpandableListAdapter {
-        private Context context;
-        private List<String> listDataHeader;
-        private HashMap<String, List<String>> mapDataChild;
-        private int lastExpandedGroupPosition = -1;
 
-        public CategAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> mapDataChild) {
-            this.context = context;
-            this.listDataHeader = listDataHeader;
-            this.mapDataChild = mapDataChild;
-        }
-
-        @Override
-        public int getGroupCount() {
-            return this.listDataHeader.size();
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return this.mapDataChild.get(this.listDataHeader.get(groupPosition)).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return this.listDataHeader.get(groupPosition);
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return this.mapDataChild.get(this.listDataHeader.get(groupPosition)).get(childPosition);
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            String strCategText = (String) getGroup(groupPosition);
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                convertView = inflater.inflate(R.layout.categ_list_header, null);
-            }
-
-            TextView categ_name = (TextView) convertView.findViewById(R.id.categ_name);
-            categ_name.setText(strCategText);
-            return convertView;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            String strChildText = (String) getChild(groupPosition, childPosition);
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                convertView = inflater.inflate(R.layout.categ_list_content, null);
-            }
-
-            TextView type_name = (TextView) convertView.findViewById(R.id.type_name);
-            type_name.setText(strChildText);
-            return convertView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

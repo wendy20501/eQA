@@ -8,6 +8,7 @@
     <color name="icubeRed">#e43e30</color>
     <color name="icubeHeader">#e9776b</color>
     <color name="icubeContent">#f0d7d7</color>
+    <color name="greyed_out">#c7c7c7</color>
     <color name="nothing">#eeeeee</color>
     <color name="task_done">#55AB6D</color>
     <color name="task_urgent">#ED6245</color>
