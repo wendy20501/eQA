@@ -63,7 +63,7 @@ public class MainActivity extends FragmentActivity {
 
         mTabHost.addTab(mTabHost.newTabSpec("One")
                         .setIndicator(vTab1)
-                , CalenderFragment.class, null);
+                , CalendarFragment.class, null);
 
         mTabHost.addTab(mTabHost.newTabSpec("Two")
                         .setIndicator(vTab2)

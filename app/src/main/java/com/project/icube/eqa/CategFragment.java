@@ -34,11 +34,15 @@ public class CategFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         taskMgr = TaskMgr.getInstance(getContext());
         mTaskObserver = new TaskContentObserver(mHandler);
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_categ, container, false);
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
